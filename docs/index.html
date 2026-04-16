@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Briefing — Miércoles, 15 de abril de 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f7f5f0;
+    --surface: #ffffff;
+    --border: #e2ddd6;
+    --text: #1a1814;
+    --muted: #6b6560;
+    --faint: #b0aaa3;
+    --accent: #1a3a5c;
+  }
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* ── HEADER ── */
+  .masthead {
+    background: var(--surface);
+    border-bottom: 2px solid var(--text);
+    padding: 1.5rem 0 1rem;
+    text-align: center;
+  }
+  .masthead-eyebrow {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .masthead-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .masthead-meta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+  }
+  .edition-badge {
+    background: var(--text);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* ── TICKER ── */
+  .ticker-wrap {
+    background: var(--text);
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 6px 0;
+  }
+  .ticker-inner {
+    display: inline-block;
+    animation: ticker 30s linear infinite;
+    padding-left: 100%;
+  }
+  .ticker-inner span { margin: 0 2rem; }
+  .ticker-up   { color: #7de8a4; }
+  .ticker-down { color: #f08080; }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 0 1rem; }
+  .main { padding: 2rem 0 3rem; }
+
+  /* ── SECTIONS ── */
+  .news-section { margin-bottom: 2.5rem; }
+  .section-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1.5px solid var(--text);
+  }
+  .section-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    color: var(--text);
+  }
+
+  /* ── CARDS ── */
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    margin-bottom: 10px;
+  }
+  .card:hover {
+    border-color: #999;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .card-featured { padding: 1.25rem 1.5rem; }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+    margin-bottom: 0;
+  }
+  .card-grid .card { margin-bottom: 0; }
+  .card-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 0.5rem; gap: 8px;
+  }
+  .tag {
+    font-size: 10px; font-weight: 600; letter-spacing: 1px;
+    text-transform: uppercase; padding: 2px 8px; border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .card-meta { font-size: 11px; color: var(--faint); }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem; font-weight: 500; line-height: 1.35;
+    color: var(--text);
+  }
+  .card-title-big { font-size: 1.2rem; }
+  .card-summary {
+    margin-top: 0.5rem;
+    font-size: 0.875rem; color: var(--muted); line-height: 1.55;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 2px solid var(--text);
+    padding: 1.5rem 0;
+    text-align: center;
+  }
+  .footer p { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .footer strong { color: var(--text); }
+  .sources-list { font-size: 11px; color: var(--faint); margin-top: 6px; }
+
+  @media (max-width: 600px) {
+    .card-grid { grid-template-columns: 1fr; }
+    .masthead-meta { flex-wrap: wrap; gap: 0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="container">
+    <p class="masthead-eyebrow">Tu resumen de noticias · Your news briefing</p>
+    <h1 class="masthead-logo">Mi Briefing</h1>
+    <div class="masthead-meta">
+      <span>Miércoles, 15 de abril de 2026</span>
+      <span class="edition-badge">Edición vespertina</span>
+      <span>Actualizado · 11:19 PM ET</span>
+    </div>
+  </div>
+</header>
+
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    <span>S&amp;P 500 <span class="ticker-up">▲</span> en seguimiento</span>
+    <span>·</span>
+    <span>EUR/USD — en seguimiento</span>
+    <span>·</span>
+    <span>Petróleo WTI — en seguimiento</span>
+    <span>·</span>
+    <span>Bitcoin — en seguimiento</span>
+    <span>·</span>
+    <span>S&amp;P 500 <span class="ticker-up">▲</span> en seguimiento</span>
+    <span>·</span>
+    <span>Oro — en seguimiento</span>
+  </div>
+</div>
+
+<main class="main">
+  <div class="container">
+    
+    <section class="news-section">
+      <div class="section-header">
+        <span class="section-dot" style="background:#1a3a5c"></span>
+        <h2 class="section-title">Internacional</h2>
+      </div>
+      
+    <a href="https://www.bbc.com/news/articles/c4g44gj7rgno?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
+        <span class="card-meta">🇬🇧 BBC · 5:10 PM ET</span>
+      </div>
+      <h3 class="card-title card-title-big">Lyse Doucet: Under fragile ceasefire, Iranians wonder if US deal can be done</h3>
+      <p class="card-summary">The BBC's chief international correspondent reports from Iran as diplomatic efforts to avoid a return to war intensify.</p>
+    </a><div class="card-grid">
+    <a href="https://www.bbc.com/news/articles/c20q2n0l9vgo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
+        <span class="card-meta">🇬🇧 BBC · 10:17 PM ET</span>
+      </div>
+      <h3 class="card-title ">Former US Marine pilot loses appeal against extradition from Australia</h3>
+      
+    </a>
+    <a href="https://www.bbc.com/news/articles/c070jxyjrmeo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
+        <span class="card-meta">🇬🇧 BBC · 7:25 AM ET</span>
+      </div>
+      <h3 class="card-title ">Trump's rift with Pope is playing out in public - it's costing him valuable support</h3>
+      
+    </a>
+    <a href="https://elpais.com/internacional/2026-04-15/iran-amenaza-con-impedir-el-comercio-maritimo-en-la-region-si-ee-uu-sigue-bloqueando-ormuz.html" target="_blank" rel="noopener" class="card card-normal">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
+        <span class="card-meta">🇪🇸 El País · 4:01 PM ET</span>
+      </div>
+      <h3 class="card-title ">Irán y EE UU buscan retomar el diálogo en medio de amenazas sobre Ormuz</h3>
+      
+    </a>
+    <a href="https://elpais.com/internacional/2026-04-15/que-busca-trump-con-el-doble-bloqueo-de-ormuz-un-ordago-con-muchas-limitaciones.html" target="_blank" rel="noopener" class="card card-normal">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
+        <span class="card-meta">🇪🇸 El País · 11:30 PM ET</span>
+      </div>
+      <h3 class="card-title ">¿Qué busca Trump con el doble bloqueo de Ormuz? Un órdago con muchas limitaciones</h3>
+      
+    </a>
+    <a href="https://elpais.com/internacional/2026-04-15/magyar-anuncia-que-cerrara-los-informativos-de-los-medios-publicos-de-hungria-hasta-que-dejen-de-ser-propaganda.html" target="_blank" rel="noopener" class="card card-normal">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
+        <span class="card-meta">🇪🇸 El País · 6:52 AM ET</span>
+      </div>
+      <h3 class="card-title ">Magyar anuncia que cerrará los informativos de los medios públicos de Hungría hasta que dejen de ser “propaganda” de Orbán</h3>
+      
+    </a></div>
+    </section>
+    <section class="news-section">
+      <div class="section-header">
+        <span class="section-dot" style="background:#1a4a2e"></span>
+        <h2 class="section-title">Economía</h2>
+      </div>
+      
+    <a href="https://www.bbc.com/news/articles/cn5330l73y2o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Economía</span>
+        <span class="card-meta">🇬🇧 BBC Business · 5:51 PM ET</span>
+      </div>
+      <h3 class="card-title card-title-big">Bank boss tells BBC he won't rush interest rate rises</h3>
+      <p class="card-summary">Bank of England governor says the Iran war energy shock makes the next rate decision "very very difficult".</p>
+    </a><div class="card-grid">
+    <a href="https://www.bbc.com/news/articles/c4gxjpekk19o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Economía</span>
+        <span class="card-meta">🇬🇧 BBC Business · 10:29 PM ET</span>
+      </div>
+      <h3 class="card-title ">China's economy grows faster than expected despite Iran war</h3>
+      
+    </a>
+    <a href="https://www.bbc.com/news/articles/c4gjjryvzg9o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Economía</span>
+        <span class="card-meta">🇬🇧 BBC Business · 6:57 PM ET</span>
+      </div>
+      <h3 class="card-title ">Horse urine perfume: why online bargains may be dangerous</h3>
+      
+    </a></div>
+    </section>
+    <section class="news-section">
+      <div class="section-header">
+        <span class="section-dot" style="background:#3a1a5c"></span>
+        <h2 class="section-title">Tecnología</h2>
+      </div>
+      
+    <a href="https://www.bbc.com/news/articles/crl11ynjyn1o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
+      <div class="card-top">
+        <span class="tag" style="background:#f0e8fa;color:#3a1a5c">Tecnología</span>
+        <span class="card-meta">🇬🇧 BBC Tech · 5:30 PM ET</span>
+      </div>
+      <h3 class="card-title card-title-big">Social media leaders called to Downing Street over children's safety</h3>
+      <p class="card-summary">Top executives from firms such as Meta and YouTube will be asked what they are doing to protect children.</p>
+    </a><div class="card-grid">
+    <a href="https://www.bbc.com/news/articles/cly00jnnxypo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
+      <div class="card-top">
+        <span class="tag" style="background:#f0e8fa;color:#3a1a5c">Tecnología</span>
+        <span class="card-meta">🇬🇧 BBC Tech · 8:05 AM ET</span>
+      </div>
+      <h3 class="card-title ">Booking.com customers warned of 'reservation hijacking' after hack</h3>
+      
+    </a>
+    <a href="https://www.bbc.com/news/articles/c05dd2yj3z3o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
+      <div class="card-top">
+        <span class="tag" style="background:#f0e8fa;color:#3a1a5c">Tecnología</span>
+        <span class="card-meta">🇬🇧 BBC Tech · 6:02 AM ET</span>
+      </div>
+      <h3 class="card-title ">Google to punish sites that trap people in with back button tricks</h3>
+      
+    </a></div>
+    </section>
+    <section class="news-section">
+      <div class="section-header">
+        <span class="section-dot" style="background:#1a3a3a"></span>
+        <h2 class="section-title">Clima</h2>
+      </div>
+      
+    <a href="https://www.bbc.com/news/articles/c75kk7p41npo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Clima</span>
+        <span class="card-meta">🇬🇧 BBC Climate · 7:14 PM ET</span>
+      </div>
+      <h3 class="card-title card-title-big">Butterfly numbers are dropping but here are five species you may see more of</h3>
+      <p class="card-summary">A warming climate has helped some to flourish, researchers say, but the outlook is troubling.</p>
+    </a><div class="card-grid">
+    <a href="https://www.bbc.com/news/videos/clyxxnz97wxo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Clima</span>
+        <span class="card-meta">🇬🇧 BBC Climate · 12:12 PM ET</span>
+      </div>
+      <h3 class="card-title ">New footage shows moment Orion capsule hatch is opened at sea</h3>
+      
+    </a>
+    <a href="https://www.bbc.com/news/articles/clyrdkxvmmpo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Clima</span>
+        <span class="card-meta">🇬🇧 BBC Climate · 7:17 PM ET</span>
+      </div>
+      <h3 class="card-title ">From blast off to splashdown: My days following Nasa's historic mission to the Moon</h3>
+      
+    </a></div>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <p><strong>Mi Briefing</strong> — Resumen de noticias para familia y amigos</p>
+    <p>Actualizado automáticamente a las 6:00 AM y 2:00 PM ET</p>
+    <p class="sources-list">Fuentes: BBC News · Reuters · DW Español · El País · AP News</p>
+  </div>
+</footer>
+
+</body>
+</html>
