@@ -25,8 +25,8 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install feedparser pytz
-
+        run: pip install feedparser pytz edge-tts
+       
       - name: Fetch news and generate page
         run: python fetch_news.py
 
