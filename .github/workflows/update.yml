@@ -28,7 +28,9 @@ jobs:
         run: pip install feedparser pytz edge-tts
        
       - name: Fetch news and generate page
-        run: python fetch_news.py
+        run: |
+          rm -f docs/*.mp3  # Borra audios viejos o vacíos antes de empezar
+          python fetch_news.py
 
       - name: Commit and push updated page
         run: |
