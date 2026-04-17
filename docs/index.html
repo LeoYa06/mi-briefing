@@ -10,167 +10,58 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --bg: #f7f5f0;
-    --surface: #ffffff;
-    --border: #e2ddd6;
-    --text: #1a1814;
-    --muted: #6b6560;
-    --faint: #b0aaa3;
-    --accent: #1a3a5c;
+    --bg: #f7f5f0; --surface: #ffffff; --border: #e2ddd6;
+    --text: #1a1814; --muted: #6b6560; --faint: #b0aaa3;
   }
-  body {
-    font-family: 'Source Sans 3', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    font-size: 16px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
+  body { font-family: 'Source Sans 3', sans-serif; background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.6; }
   a { color: inherit; text-decoration: none; }
 
-  /* ── HEADER ── */
-  .masthead {
-    background: var(--surface);
-    border-bottom: 2px solid var(--text);
-    padding: 1.5rem 0 1rem;
-    text-align: center;
-  }
-  .masthead-eyebrow {
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 0.5rem;
-  }
-  .masthead-logo {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2rem, 6vw, 3.5rem);
-    font-weight: 700;
-    letter-spacing: -1px;
-    color: var(--text);
-    line-height: 1;
-    margin-bottom: 0.5rem;
-  }
-  .masthead-meta {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 1.5rem;
-    font-size: 12px;
-    color: var(--muted);
-    border-top: 1px solid var(--border);
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
-  }
-  .edition-badge {
-    background: var(--text);
-    color: white;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 10px;
-    border-radius: 2px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-  }
+  .masthead { background: var(--surface); border-bottom: 2px solid var(--text); padding: 1.5rem 0 1rem; text-align: center; }
+  .masthead-eyebrow { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
+  .masthead-logo { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 700; letter-spacing: -1px; line-height: 1; margin-bottom: 0.5rem; }
+  .masthead-meta { display: flex; justify-content: center; align-items: center; gap: 1.5rem; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 0.75rem; padding-top: 0.75rem; flex-wrap: wrap; }
+  .edition-badge { background: var(--text); color: white; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 2px; letter-spacing: 1px; text-transform: uppercase; }
 
-  /* ── TICKER ── */
-  .ticker-wrap {
-    background: var(--text);
-    color: white;
-    font-size: 12px;
-    font-weight: 500;
-    overflow: hidden;
-    white-space: nowrap;
-    padding: 6px 0;
-  }
-  .ticker-inner {
-    display: inline-block;
-    animation: ticker 30s linear infinite;
-    padding-left: 100%;
-  }
+  .ticker-wrap { background: var(--text); color: white; font-size: 12px; font-weight: 500; overflow: hidden; white-space: nowrap; padding: 6px 0; }
+  .ticker-inner { display: inline-block; animation: ticker 35s linear infinite; padding-left: 100%; }
   .ticker-inner span { margin: 0 2rem; }
-  .ticker-up   { color: #7de8a4; }
-  .ticker-down { color: #f08080; }
   @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-100%); } }
 
-  /* ── LAYOUT ── */
+  .audio-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.75rem 0; }
+  .audio-inner { max-width: 960px; margin: 0 auto; padding: 0 1rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .audio-label { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; }
+  .lang-toggle { display: flex; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .lang-btn { padding: 5px 14px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: var(--muted); font-family: 'Source Sans 3', sans-serif; transition: all 0.15s; }
+  .lang-btn.active { background: var(--text); color: white; }
+  .play-btn { display: flex; align-items: center; gap: 6px; padding: 6px 16px; font-size: 13px; font-weight: 600; background: var(--text); color: white; border: none; border-radius: 4px; cursor: pointer; font-family: 'Source Sans 3', sans-serif; transition: opacity 0.15s; }
+  .play-btn:hover { opacity: 0.85; }
+  .audio-progress { flex: 1; min-width: 140px; font-size: 12px; color: var(--muted); display: none; }
+  .audio-progress.visible { display: block; }
+  .progress-bar-wrap { height: 3px; background: var(--border); border-radius: 2px; margin-top: 4px; }
+  .progress-bar-fill { height: 3px; background: var(--text); border-radius: 2px; width: 0%; transition: width 0.5s linear; }
+
   .container { max-width: 960px; margin: 0 auto; padding: 0 1rem; }
   .main { padding: 2rem 0 3rem; }
-
-  /* ── SECTIONS ── */
   .news-section { margin-bottom: 2.5rem; }
-  .section-header {
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1.5px solid var(--text);
-  }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1.5px solid var(--text); }
   .section-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    color: var(--text);
-  }
-
-  /* ── CARDS ── */
-  .card {
-    display: block;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 1rem 1.25rem;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    margin-bottom: 10px;
-  }
-  .card:hover {
-    border-color: #999;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-  }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 500; }
+  .card { display: block; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.25rem; transition: border-color 0.15s, box-shadow 0.15s; margin-bottom: 10px; }
+  .card:hover { border-color: #999; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
   .card-featured { padding: 1.25rem 1.5rem; }
-  .card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 10px;
-    margin-bottom: 0;
-  }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
   .card-grid .card { margin-bottom: 0; }
-  .card-top {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 0.5rem; gap: 8px;
-  }
-  .tag {
-    font-size: 10px; font-weight: 600; letter-spacing: 1px;
-    text-transform: uppercase; padding: 2px 8px; border-radius: 2px;
-    flex-shrink: 0;
-  }
+  .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; gap: 8px; }
+  .tag { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; flex-shrink: 0; }
   .card-meta { font-size: 11px; color: var(--faint); }
-  .card-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 0.95rem; font-weight: 500; line-height: 1.35;
-    color: var(--text);
-  }
+  .card-title { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 500; line-height: 1.35; }
   .card-title-big { font-size: 1.2rem; }
-  .card-summary {
-    margin-top: 0.5rem;
-    font-size: 0.875rem; color: var(--muted); line-height: 1.55;
-  }
-
-  /* ── FOOTER ── */
-  .footer {
-    border-top: 2px solid var(--text);
-    padding: 1.5rem 0;
-    text-align: center;
-  }
+  .card-summary { margin-top: 0.5rem; font-size: 0.875rem; color: var(--muted); line-height: 1.55; }
+  .footer { border-top: 2px solid var(--text); padding: 1.5rem 0; text-align: center; }
   .footer p { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
   .footer strong { color: var(--text); }
   .sources-list { font-size: 11px; color: var(--faint); margin-top: 6px; }
-
-  @media (max-width: 600px) {
-    .card-grid { grid-template-columns: 1fr; }
-    .masthead-meta { flex-wrap: wrap; gap: 0.5rem; }
-  }
+  @media (max-width: 600px) { .card-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -182,24 +73,37 @@
     <div class="masthead-meta">
       <span>Jueves, 16 de abril de 2026</span>
       <span class="edition-badge">Edición vespertina</span>
-      <span>Actualizado · 3:55 PM ET</span>
+      <span>Actualizado · 9:27 PM ET</span>
     </div>
   </div>
 </header>
 
 <div class="ticker-wrap">
   <div class="ticker-inner">
-    <span>S&amp;P 500 <span class="ticker-up">▲</span> en seguimiento</span>
-    <span>·</span>
-    <span>EUR/USD — en seguimiento</span>
-    <span>·</span>
-    <span>Petróleo WTI — en seguimiento</span>
-    <span>·</span>
-    <span>Bitcoin — en seguimiento</span>
-    <span>·</span>
-    <span>S&amp;P 500 <span class="ticker-up">▲</span> en seguimiento</span>
-    <span>·</span>
-    <span>Oro — en seguimiento</span>
+    <span>S&amp;P 500 — en seguimiento</span><span>·</span>
+    <span>EUR/USD — en seguimiento</span><span>·</span>
+    <span>Petróleo WTI — en seguimiento</span><span>·</span>
+    <span>Bitcoin — en seguimiento</span><span>·</span>
+    <span>Oro — en seguimiento</span><span>·</span>
+    <span>Nasdaq — en seguimiento</span>
+  </div>
+</div>
+
+<div class="audio-bar">
+  <div class="audio-inner">
+    <div class="audio-label">🎧 Escuchar resumen</div>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-es" onclick="setLang('es')">Español</button>
+      <button class="lang-btn"        id="btn-en" onclick="setLang('en')">English</button>
+    </div>
+    <button class="play-btn" id="play-btn" onclick="toggleAudio()">
+      <span id="play-icon">▶</span>
+      <span id="play-label">Reproducir</span>
+    </button>
+    <div class="audio-progress" id="audio-progress">
+      <div id="progress-text">Iniciando...</div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill"></div></div>
+    </div>
   </div>
 </div>
 
@@ -212,36 +116,36 @@
         <h2 class="section-title">Internacional</h2>
       </div>
       
-    <a href="https://www.bbc.com/news/articles/cvg0z3n5e5jo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
+    <a href="https://www.bbc.com/news/articles/c8x7w1w9gd2o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
+        <span class="card-meta">🇬🇧 BBC · 5:18 PM ET</span>
+      </div>
+      <h3 class="card-title card-title-big">Israel y Líbano acuerdan un alto el fuego de 10 días, dice Trump</h3>
+      <p class="card-summary">El presidente de los Estados Unidos invita a los líderes de los dos países a Washington, ya que el primer ministro de Israel insiste en que las tropas no abandonarán el sur del Líbano.</p>
+    </a><div class="card-grid">
+    <a href="https://www.bbc.com/news/articles/cvg0z3n5e5jo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
       <div class="card-top">
         <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
         <span class="card-meta">🇬🇧 BBC · 2:40 PM ET</span>
       </div>
-      <h3 class="card-title card-title-big">Pope criticises 'tyrants' who spend billions on wars after Trump spat</h3>
-      <p class="card-summary">The comments follow a high-profile spat with US President Donald Trump, who called the Pope weak on crime.</p>
-    </a><div class="card-grid">
+      <h3 class="card-title ">El Papa critica a los "tiranos" que gastan miles de millones en guerras después de que Trump escupiera</h3>
+      
+    </a>
     <a href="https://www.bbc.com/news/articles/cz9025d7jqzo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
       <div class="card-top">
         <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
         <span class="card-meta">🇬🇧 BBC · 11:23 AM ET</span>
       </div>
-      <h3 class="card-title ">Turkish police detain 162 people over online posts about school shootings</h3>
-      
-    </a>
-    <a href="https://www.bbc.com/sport/football/articles/c4g84l14e5eo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
-        <span class="card-meta">🇬🇧 BBC · 9:53 AM ET</span>
-      </div>
-      <h3 class="card-title ">Former Arsenal goalkeeper Alex Manninger dies after car hit by train</h3>
+      <h3 class="card-title ">La policía turca detiene a 162 personas por publicaciones en línea sobre tiroteos escolares</h3>
       
     </a>
     <a href="https://elpais.com/internacional/2026-04-16/trump-anuncia-un-alto-el-fuego-de-10-dias-entre-israel-y-libano-a-partir-de-esta-noche.html" target="_blank" rel="noopener" class="card card-normal">
       <div class="card-top">
         <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
-        <span class="card-meta">🇪🇸 El País · 2:51 PM ET</span>
+        <span class="card-meta">🇪🇸 El País · 5:13 PM ET</span>
       </div>
-      <h3 class="card-title ">Trump anuncia un alto el fuego de 10 días en Líbano a partir de esta noche</h3>
+      <h3 class="card-title ">Israel y Líbano inician un alto el fuego de 10 días</h3>
       
     </a>
     <a href="https://elpais.com/internacional/2026-04-16/hegseth-amenaza-con-reanudar-la-guerra-si-iran-no-acepta-el-pacto-con-estados-unidos.html" target="_blank" rel="noopener" class="card card-normal">
@@ -267,28 +171,28 @@
         <h2 class="section-title">Economía</h2>
       </div>
       
-    <a href="https://www.bbc.com/news/articles/c5y97jjnqzyo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
+    <a href="https://www.bbc.com/news/articles/c4gvvnpl5kno?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
       <div class="card-top">
         <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Economía</span>
-        <span class="card-meta">🇬🇧 BBC Business · 1:05 PM ET</span>
+        <span class="card-meta">🇬🇧 BBC Negocios · 7:01 PM ET</span>
       </div>
-      <h3 class="card-title card-title-big">No issues with UK fuel supply, says Reeves</h3>
-      <p class="card-summary">The chancellor was speaking at the end of the International Monetary Fund meeting in Washington.</p>
+      <h3 class="card-title card-title-big">El aumento del valor de las cartas de Pokémon desencadena una ola de crímenes</h3>
+      <p class="card-summary">Pequeñas tiendas en todo el Reino Unido están siendo atacadas por ladrones que roban objetos de colección por valor de miles de libras.</p>
     </a><div class="card-grid">
-    <a href="https://www.bbc.com/news/articles/czjw2kz0l22o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
+    <a href="https://www.bbc.com/news/articles/cvglzn9e82eo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
       <div class="card-top">
         <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Economía</span>
-        <span class="card-meta">🇬🇧 BBC Business · 3:19 PM ET</span>
+        <span class="card-meta">🇬🇧 BBC Negocios · 5:59 PM ET</span>
       </div>
-      <h3 class="card-title ">Europe has 'maybe six weeks of jet fuel left', energy boss warns</h3>
+      <h3 class="card-title ">El cofundador de Netflix, Reed Hastings, dimitirá como presidente</h3>
       
     </a>
-    <a href="https://www.bbc.com/news/articles/cz0e23r0993o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
+    <a href="https://www.bbc.com/news/articles/c5y97jjnqzyo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
       <div class="card-top">
         <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Economía</span>
-        <span class="card-meta">🇬🇧 BBC Business · 6:22 AM ET</span>
+        <span class="card-meta">🇬🇧 BBC Negocios · 1:05 PM ET</span>
       </div>
-      <h3 class="card-title ">UK economy grew faster than expected in February ahead of Iran war</h3>
+      <h3 class="card-title ">No hay problemas con el suministro de combustible en el Reino Unido, dice Reeves</h3>
       
     </a></div>
     </section>
@@ -298,28 +202,28 @@
         <h2 class="section-title">Tecnología</h2>
       </div>
       
-    <a href="https://www.bbc.com/news/articles/crl11ynjyn1o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
+    <a href="https://www.bbc.com/news/articles/c1d907lq6nyo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
+      <div class="card-top">
+        <span class="tag" style="background:#f0e8fa;color:#3a1a5c">Tecnología</span>
+        <span class="card-meta">🇬🇧 BBC Tech · 7:04 PM ET</span>
+      </div>
+      <h3 class="card-title card-title-big">¿Podría un gemelo digital convertirte en un 'supertrabajador'?</h3>
+      <p class="card-summary">Las empresas dicen que los gemelos digitales hacen que el personal sea más productivo, pero ¿son un posible campo minado legal?</p>
+    </a><div class="card-grid">
+    <a href="https://www.bbc.com/news/articles/crl11ynjyn1o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
       <div class="card-top">
         <span class="tag" style="background:#f0e8fa;color:#3a1a5c">Tecnología</span>
         <span class="card-meta">🇬🇧 BBC Tech · 5:20 AM ET</span>
       </div>
-      <h3 class="card-title card-title-big">Things can't go on like this with online safety, Starmer tells tech bosses</h3>
-      <p class="card-summary">It comes as the government continues to consult on whether to ban under-16s from social media in the UK.</p>
-    </a><div class="card-grid">
+      <h3 class="card-title ">Las cosas no pueden seguir así con la seguridad en línea, dice Starmer a los jefes de tecnología</h3>
+      
+    </a>
     <a href="https://www.bbc.com/news/articles/cly00jnnxypo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
       <div class="card-top">
         <span class="tag" style="background:#f0e8fa;color:#3a1a5c">Tecnología</span>
         <span class="card-meta">🇬🇧 BBC Tech · 8:05 AM ET</span>
       </div>
-      <h3 class="card-title ">Booking.com customers warned of 'reservation hijacking' after hack</h3>
-      
-    </a>
-    <a href="https://www.bbc.com/news/articles/c05dd2yj3z3o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
-      <div class="card-top">
-        <span class="tag" style="background:#f0e8fa;color:#3a1a5c">Tecnología</span>
-        <span class="card-meta">🇬🇧 BBC Tech · 6:02 AM ET</span>
-      </div>
-      <h3 class="card-title ">Google to punish sites that trap people in with back button tricks</h3>
+      <h3 class="card-title ">Los clientes de Booking.com advirtieron sobre el "secuestro de reservas" después del hackeo</h3>
       
     </a></div>
     </section>
@@ -332,25 +236,25 @@
     <a href="https://www.bbc.com/news/articles/c86ey5n9vx9o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
       <div class="card-top">
         <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Clima</span>
-        <span class="card-meta">🇬🇧 BBC Climate · 7:20 PM ET</span>
+        <span class="card-meta">🇬🇧 BBC Clima · 7:20 PM ET</span>
       </div>
-      <h3 class="card-title card-title-big">Why cheap power could matter more than clean power in the push for net zero</h3>
-      <p class="card-summary">The question of how important making our electricity clean is to going green is coming under increasing scrutiny</p>
+      <h3 class="card-title card-title-big">Por qué la energía barata podría importar más que la energía limpia en el impulso hacia el cero neto</h3>
+      <p class="card-summary">La cuestión de cuán importante es limpiar nuestra electricidad para volvernos ecológicos está siendo objeto de un escrutinio cada vez mayor</p>
     </a><div class="card-grid">
     <a href="https://www.bbc.com/news/articles/c75kk7p41npo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
       <div class="card-top">
         <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Clima</span>
-        <span class="card-meta">🇬🇧 BBC Climate · 7:14 PM ET</span>
+        <span class="card-meta">🇬🇧 BBC Clima · 7:14 PM ET</span>
       </div>
-      <h3 class="card-title ">Butterfly numbers are dropping but here are five species you may see more of</h3>
+      <h3 class="card-title ">El número de mariposas está disminuyendo, pero aquí hay cinco especies que puedes ver más</h3>
       
     </a>
     <a href="https://www.bbc.com/news/videos/clyxxnz97wxo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
       <div class="card-top">
         <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Clima</span>
-        <span class="card-meta">🇬🇧 BBC Climate · 12:12 PM ET</span>
+        <span class="card-meta">🇬🇧 BBC Clima · 12:12 PM ET</span>
       </div>
-      <h3 class="card-title ">New footage shows moment Orion capsule hatch is opened at sea</h3>
+      <h3 class="card-title ">Nuevas imágenes muestran el momento en que se abre la escotilla de la cápsula de Orión en el mar</h3>
       
     </a></div>
     </section>
@@ -361,9 +265,68 @@
   <div class="container">
     <p><strong>Mi Briefing</strong> — Resumen de noticias para familia y amigos</p>
     <p>Actualizado automáticamente a las 6:00 AM y 2:00 PM ET</p>
-    <p class="sources-list">Fuentes: BBC News · Reuters · DW Español · El País · AP News</p>
+    <p class="sources-list">Fuentes: BBC News · Reuters · DW Español · El País</p>
   </div>
 </footer>
 
+<script>
+const SCRIPTS = {"es": "Bienvenido a Mi Briefing. Edici\u00f3n vespertina del Jueves, 16 de abril de 2026. Las principales noticias de hoy son: Noticia 1: Israel y L\u00edbano acuerdan un alto el fuego de 10 d\u00edas, dice Trump. Fuente: BBC. Noticia 2: El aumento del valor de las cartas de Pok\u00e9mon desencadena una ola de cr\u00edmenes. Fuente: BBC Negocios. Noticia 3: \u00bfPodr\u00eda un gemelo digital convertirte en un 'supertrabajador'?. Fuente: BBC Tech. Noticia 4: Por qu\u00e9 la energ\u00eda barata podr\u00eda importar m\u00e1s que la energ\u00eda limpia en el impulso hacia el cero neto. Fuente: BBC Clima. Eso es todo por ahora. Visita Mi Briefing para leer m\u00e1s detalles.", "en": "Welcome to Mi Briefing. Edici\u00f3n vespertina, Jueves, 16 de abril de 2026. Here are today's top stories: Story 1: Israel and Lebanon agree 10-day ceasefire, Trump says. Source: BBC. Story 2: Rising value of Pok\u00e9mon cards sparks smash and grab crime spree. Source: BBC Negocios. Story 3: Could a digital twin make you into a 'superworker'?. Source: BBC Tech. Story 4: Why cheap power could matter more than clean power in the push for net zero. Source: BBC Clima. That's all for now. Visit Mi Briefing to read more."};
+let currentLang = 'es', speaking = false, utterance = null;
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('play-label').textContent = lang === 'es' ? 'Reproducir' : 'Play';
+  if (speaking) stopAudio();
+}
+
+function toggleAudio() { speaking ? stopAudio() : startAudio(); }
+
+function startAudio() {
+  if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+  const text = SCRIPTS[currentLang];
+  utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang  = currentLang === 'es' ? 'es-US' : 'en-US';
+  utterance.rate  = 0.92;
+  utterance.pitch = 1.0;
+  const voices = window.speechSynthesis.getVoices();
+  const pick = voices.find(v => currentLang === 'es'
+    ? v.lang.startsWith('es') && /Google|Paulina|Monica|Jorge/.test(v.name)
+    : v.lang.startsWith('en') && /Google|Samantha|Alex/.test(v.name)
+  ) || voices.find(v => currentLang === 'es' ? v.lang.startsWith('es') : v.lang.startsWith('en'));
+  if (pick) utterance.voice = pick;
+  const total = text.length;
+  utterance.onboundary = (e) => {
+    if (e.name === 'word') {
+      const pct = Math.min(100, Math.round((e.charIndex / total) * 100));
+      document.getElementById('progress-fill').style.width = pct + '%';
+      document.getElementById('progress-text').textContent =
+        (currentLang === 'es' ? 'Reproduciendo' : 'Playing') + '... ' + pct + '%';
+    }
+  };
+  utterance.onend = utterance.onerror = resetPlayer;
+  window.speechSynthesis.speak(utterance);
+  speaking = true;
+  document.getElementById('play-icon').textContent  = '⏹';
+  document.getElementById('play-label').textContent = currentLang === 'es' ? 'Detener' : 'Stop';
+  document.getElementById('audio-progress').classList.add('visible');
+}
+
+function stopAudio() { window.speechSynthesis.cancel(); resetPlayer(); }
+
+function resetPlayer() {
+  speaking = false;
+  document.getElementById('play-icon').textContent  = '▶';
+  document.getElementById('play-label').textContent = currentLang === 'es' ? 'Reproducir' : 'Play';
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('audio-progress').classList.remove('visible');
+}
+
+if (window.speechSynthesis) {
+  speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+}
+</script>
 </body>
 </html>
