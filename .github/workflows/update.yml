@@ -25,6 +25,44 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
+        run: pip install feedparser pytz
+
+      - name: Fetch news and generate page
+        run: python fetch_news.py
+
+      - name: Commit and push updated page
+        run: |
+          git config user.name "Mi Briefing Bot"
+          git config user.email "bot@mibriefing.local"
+          git add docs/index.html
+          git diff --staged --quiet || git commit -m "📰 News update $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git pushname: Update News Briefing
+
+on:
+  schedule:
+    # 6:00 AM ET = 10:00 UTC (EST) / 11:00 UTC (EDT)
+    - cron: '0 11 * * *'
+    # 2:00 PM ET = 18:00 UTC (EST) / 19:00 UTC (EDT)
+    - cron: '0 19 * * *'
+  workflow_dispatch:  # allows manual trigger from GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
         run: pip install feedparser pytz edge-tts
        
       - name: Fetch news and generate page
