@@ -4,19 +4,16 @@ from datetime import datetime
 import pytz
 import re
 import os
-import asyncio
-import edge_tts
 from urllib.request import urlopen, Request
 from urllib.parse import quote
 
-# ── 1. CONFIGURACIÓN DE TIEMPO (Texas/New York) ──────────────────────
 ET = pytz.timezone("America/New_York")
 now_et = datetime.now(ET)
 hour = now_et.hour
 edition = "morning" if hour < 13 else "afternoon"
 edition_es = "Edición matutina" if edition == "morning" else "Edición vespertina"
 
-# ── 2. TRADUCCIÓN VIA MYMEMORY ───────────────────────────────────────
+# ── Translation via MyMemory (free, no key, 1000 req/day) ──────────────────
 def translate_to_spanish(text):
     if not text or len(text.strip()) == 0:
         return text
@@ -33,22 +30,29 @@ def translate_to_spanish(text):
         print(f"  Translation error: {e}")
     return text
 
-# ── 3. RSS FEEDS ─────────────────────────────────────────────────────
+# ── RSS Feeds ──────────────────────────────────────────────────────────────
 FEEDS = [
     {"url": "https://feeds.bbci.co.uk/news/world/rss.xml",         "source": "BBC",         "lang": "en", "cat": "Internacional"},
     {"url": "https://feeds.reuters.com/reuters/worldNews",          "source": "Reuters",     "lang": "en", "cat": "Internacional"},
     {"url": "https://rss.dw.com/rdf/rss-es-world",                 "source": "DW Español",  "lang": "es", "cat": "Internacional"},
-    {"url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/internacional/portada", "source": "El País", "lang": "es", "cat": "Internacional"},
+    {"url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/internacional/portada",
+                                                                    "source": "El País",     "lang": "es", "cat": "Internacional"},
     {"url": "https://feeds.bbci.co.uk/news/business/rss.xml",       "source": "BBC Negocios","lang": "en", "cat": "Economía"},
+    {"url": "https://feeds.reuters.com/reuters/businessNews",       "source": "Reuters Eco", "lang": "en", "cat": "Economía"},
     {"url": "https://rss.dw.com/rdf/rss-es-eco",                   "source": "DW Economía", "lang": "es", "cat": "Economía"},
+    {"url": "https://feeds.reuters.com/reuters/technologyNews",     "source": "Reuters Tech","lang": "en", "cat": "Tecnología"},
     {"url": "https://feeds.bbci.co.uk/news/technology/rss.xml",    "source": "BBC Tech",    "lang": "en", "cat": "Tecnología"},
+    {"url": "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+                                                                    "source": "BBC Clima",   "lang": "en", "cat": "Clima"},
 ]
 
+ITEMS_PER_FEED = 3
 articles = []
+
 for feed_meta in FEEDS:
     try:
         feed = feedparser.parse(feed_meta["url"])
-        for entry in feed.entries[:3]:
+        for entry in feed.entries[:ITEMS_PER_FEED]:
             summary = getattr(entry, "summary", "") or ""
             summary = re.sub('<[^<]+?>', '', summary).strip()
             summary = summary[:220] + ("..." if len(summary) > 220 else "")
@@ -57,178 +61,304 @@ for feed_meta in FEEDS:
             summary_es = summary
 
             if feed_meta["lang"] == "en":
-                title_es = translate_to_spanish(entry.title)
+                print(f"  Translating: {entry.title[:60]}...")
+                title_es  = translate_to_spanish(entry.title)
                 if summary:
                     summary_es = translate_to_spanish(summary)
 
             pub = getattr(entry, "published_parsed", None)
-            time_str = datetime(*pub[:6], tzinfo=pytz.utc).astimezone(ET).strftime("%-I:%M %p ET") if pub else "—"
+            if pub:
+                dt = datetime(*pub[:6], tzinfo=pytz.utc).astimezone(ET)
+                time_str = dt.strftime("%-I:%M %p ET")
+            else:
+                time_str = "—"
 
             articles.append({
-                "title_es": title_es,
-                "title_en": entry.title,
-                "link": entry.link,
+                "title":      entry.title,
+                "title_es":   title_es,
+                "link":       entry.link,
+                "summary":    summary,
                 "summary_es": summary_es,
-                "source": feed_meta["source"],
-                "cat": feed_meta["cat"],
-                "time": time_str,
-                "lang": feed_meta["lang"]
+                "source":     feed_meta["source"],
+                "lang":       feed_meta["lang"],
+                "cat":        feed_meta["cat"],
+                "time":       time_str,
             })
     except Exception as e:
-        print(f"Error procesando {feed_meta['source']}: {e}")
+        print(f"Error fetching {feed_meta['url']}: {e}")
 
-# ── 4. ORGANIZACIÓN POR CATEGORÍAS ───────────────────────────────────
+# ── Group by category ──────────────────────────────────────────────────────
 from collections import defaultdict
 by_cat = defaultdict(list)
 for a in articles:
     by_cat[a["cat"]].append(a)
 
+CAT_COLORS = {
+    "Internacional": ("#1a3a5c", "#e8f0fa"),
+    "Economía":      ("#1a4a2e", "#e8f5ee"),
+    "Tecnología":    ("#3a1a5c", "#f0e8fa"),
+    "Clima":         ("#1a3a3a", "#e8f5f5"),
+}
+
 def build_article_card(a, featured=False):
+    text_color, bg_color = CAT_COLORS.get(a["cat"], ("#333", "#f5f5f5"))
     source_flag = "🇬🇧" if a["lang"] == "en" else "🇪🇸"
+    title_display   = a["title_es"]
+    summary_display = a.get("summary_es", "")
     return f"""
-    <a href="{a['link']}" target="_blank" class="card {'card-featured' if featured else 'card-normal'}">
+    <a href="{a['link']}" target="_blank" rel="noopener" class="card {'card-featured' if featured else 'card-normal'}">
       <div class="card-top">
-        <span class="tag">{a['cat']}</span>
+        <span class="tag" style="background:{bg_color};color:{text_color}">{a['cat']}</span>
         <span class="card-meta">{source_flag} {a['source']} · {a['time']}</span>
       </div>
-      <h3 class="card-title">{a['title_es']}</h3>
-      {f'<p class="card-summary">{a["summary_es"]}</p>' if featured else ''}
+      <h3 class="card-title {'card-title-big' if featured else ''}">{title_display}</h3>
+      {'<p class="card-summary">' + summary_display + '</p>' if featured and summary_display else ''}
     </a>"""
 
+def build_section(cat, items):
+    if not items:
+        return ""
+    text_color, _ = CAT_COLORS.get(cat, ("#333", "#f5f5f5"))
+    featured = items[0]
+    rest = items[1:]
+    cards_html = build_article_card(featured, featured=True)
+    if rest:
+        cards_html += '<div class="card-grid">'
+        for a in rest:
+            cards_html += build_article_card(a, featured=False)
+        cards_html += '</div>'
+    return f"""
+    <section class="news-section">
+      <div class="section-header">
+        <span class="section-dot" style="background:{text_color}"></span>
+        <h2 class="section-title">{cat}</h2>
+      </div>
+      {cards_html}
+    </section>"""
+
 sections_html = ""
-for cat in ["Internacional", "Economía", "Tecnología"]:
-    items = by_cat.get(cat, [])
-    if items:
-        sections_html += f'<section class="news-section"><h2>{cat}</h2>'
-        sections_html += build_article_card(items[0], featured=True)
-        if len(items) > 1:
-            sections_html += '<div class="card-grid">'
-            for rest in items[1:]:
-                sections_html += build_article_card(rest, featured=False)
-            sections_html += '</div>'
-        sections_html += '</section>'
+for cat in ["Internacional", "Economía", "Tecnología", "Clima"]:
+    sections_html += build_section(cat, by_cat.get(cat, []))
 
-# ── 5. PREPARACIÓN DE TEXTOS PARA AUDIO ─────────────────────────────
-top_articles = [by_cat[c][0] for c in by_cat if by_cat[c]]
-date_display = now_et.strftime("%d/%m/%Y")
+# ── Audio scripts (top featured article per category) ─────────────────────
+top_articles = [by_cat[c][0] for c in ["Internacional","Economía","Tecnología","Clima"] if by_cat.get(c)]
 
-text_es = f"Bienvenido a Mi Briefing. {edition_es}. Las noticias principales de hoy son: " + " ".join([f"{a['title_es']}. Fuente: {a['source']}." for a in top_articles[:5]])
-text_en = f"Welcome to Mi Briefing. {edition} edition. Today's top stories: " + " ".join([f"{a['title_en']}. Source: {a['source']}." for a in top_articles[:5]])
+# Date strings
+months_en_es = {
+    "January":"enero","February":"febrero","March":"marzo","April":"abril",
+    "May":"mayo","June":"junio","July":"julio","August":"agosto",
+    "September":"septiembre","October":"octubre","November":"noviembre","December":"diciembre"
+}
+days_en_es = {
+    "Monday":"Lunes","Tuesday":"Martes","Wednesday":"Miércoles","Thursday":"Jueves",
+    "Friday":"Viernes","Saturday":"Sábado","Sunday":"Domingo"
+}
+date_es = now_et.strftime("%-d de %B de %Y")
+for en, es in months_en_es.items():
+    date_es = date_es.replace(en, es)
+day_en = now_et.strftime("%A")
+date_display = f"{days_en_es.get(day_en, day_en)}, {date_es}"
+time_display  = now_et.strftime("%-I:%M %p ET")
 
-async def generate_audios():
-    os.makedirs("docs", exist_ok=True)
-    
-    # Intentaremos hasta 3 veces por si falla la conexión
-    for intento in range(3):
-        try:
-            print(f"Intento {intento + 1}: Generando audios neuronales...")
-            
-            communicate_es = edge_tts.Communicate(text_es, "es-ES-AlvaroNeural")
-            communicate_en = edge_tts.Communicate(text_en, "en-US-AndrewNeural")
-            
-            # Guardamos los archivos
-            await communicate_es.save("docs/news_es.mp3")
-            await communicate_en.save("docs/news_en.mp3")
-            
-            # Verificamos si el archivo de audio tiene un tamaño real (ej. más de 2000 bytes)
-            if os.path.exists("docs/news_es.mp3") and os.path.getsize("docs/news_es.mp3") > 100:
-                print(f"¡Éxito! Audio generado correctamente ({os.path.getsize('docs/news_es.mp3')} bytes)")
-                return # Salimos del bucle si tuvo éxito
-            
-        except Exception as e:
-            print(f"Error en intento {intento + 1}: {e}")
-            await asyncio.sleep(2) # Esperamos 2 segundos antes de reintentar
+intro_es = f"Bienvenido a Mi Briefing. {edition_es} del {date_display}. Las principales noticias de hoy son: "
+intro_en = f"Welcome to Mi Briefing. {edition_es}, {date_display}. Here are today's top stories: "
+items_es = [f"Noticia {i+1}: {a['title_es']}. Fuente: {a['source']}." for i, a in enumerate(top_articles[:6])]
+items_en = [f"Story {i+1}: {a['title']}. Source: {a['source']}."     for i, a in enumerate(top_articles[:6])]
+outro_es = "Eso es todo por ahora. Visita Mi Briefing para leer más detalles."
+outro_en = "That's all for now. Visit Mi Briefing to read more."
+audio_data = json.dumps({
+    "es": intro_es + " ".join(items_es) + " " + outro_es,
+    "en": intro_en + " ".join(items_en) + " " + outro_en,
+})
 
-    print("ADVERTENCIA: No se pudo generar un audio válido tras 3 intentos.")
-
-# Ejecutamos la generación
-asyncio.run(generate_audios())
-# ── 7. GENERACIÓN DEL HTML FINAL ─────────────────────────────────────
+# ── HTML ──────────────────────────────────────────────────────────────────
 HTML = f"""<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mi Briefing — {date_display}</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-  body {{ font-family: 'Source Sans 3', sans-serif; background: #f7f5f0; color: #1a1814; line-height: 1.6; padding: 20px; }}
-  .container {{ max-width: 900px; margin: 0 auto; }}
-  .masthead {{ text-align: center; border-bottom: 3px solid #000; padding-bottom: 20px; margin-bottom: 30px; }}
-  .masthead h1 {{ font-family: 'Playfair Display', serif; font-size: 3rem; }}
-  
-  .audio-bar {{ background: #fff; padding: 20px; border-radius: 10px; margin-bottom: 30px; display: flex; align-items: center; gap: 20px; border: 1px solid #ddd; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
-  .play-btn {{ background: #000; color: #fff; border: none; padding: 12px 25px; cursor: pointer; border-radius: 6px; font-weight: 600; display: flex; align-items: center; gap: 10px; }}
-  .progress-bar {{ flex: 1; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }}
-  .progress-fill {{ width: 0%; height: 100%; background: #000; transition: width 0.3s; }}
-  select {{ padding: 8px; border-radius: 5px; border: 1px solid #ccc; }}
+  *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
+  :root {{
+    --bg: #f7f5f0; --surface: #ffffff; --border: #e2ddd6;
+    --text: #1a1814; --muted: #6b6560; --faint: #b0aaa3;
+  }}
+  body {{ font-family: 'Source Sans 3', sans-serif; background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.6; }}
+  a {{ color: inherit; text-decoration: none; }}
 
-  .news-section {{ margin-bottom: 40px; }}
-  .news-section h2 {{ font-family: 'Playfair Display', serif; border-bottom: 1px solid #000; margin-bottom: 15px; text-transform: uppercase; font-size: 1.2rem; }}
-  .card {{ background: #fff; border: 1px solid #ddd; padding: 20px; margin-bottom: 15px; display: block; text-decoration: none; color: inherit; border-radius: 8px; transition: 0.2s; }}
-  .card:hover {{ transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }}
-  .card-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }}
-  .tag {{ font-weight: bold; font-size: 10px; background: #000; color: #fff; padding: 3px 8px; border-radius: 3px; }}
-  .card-meta {{ font-size: 12px; color: #888; margin-left: 10px; }}
-  .card-title {{ margin-top: 10px; font-family: 'Playfair Display', serif; font-size: 1.3rem; }}
-  
-  @media (max-width: 600px) {{ .card-grid {{ grid-template-columns: 1fr; }} .masthead h1 {{ font-size: 2rem; }} }}
+  .masthead {{ background: var(--surface); border-bottom: 2px solid var(--text); padding: 1.5rem 0 1rem; text-align: center; }}
+  .masthead-eyebrow {{ font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }}
+  .masthead-logo {{ font-family: 'Playfair Display', serif; font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 700; letter-spacing: -1px; line-height: 1; margin-bottom: 0.5rem; }}
+  .masthead-meta {{ display: flex; justify-content: center; align-items: center; gap: 1.5rem; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 0.75rem; padding-top: 0.75rem; flex-wrap: wrap; }}
+  .edition-badge {{ background: var(--text); color: white; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 2px; letter-spacing: 1px; text-transform: uppercase; }}
+
+  .ticker-wrap {{ background: var(--text); color: white; font-size: 12px; font-weight: 500; overflow: hidden; white-space: nowrap; padding: 6px 0; }}
+  .ticker-inner {{ display: inline-block; animation: ticker 35s linear infinite; padding-left: 100%; }}
+  .ticker-inner span {{ margin: 0 2rem; }}
+  @keyframes ticker {{ from {{ transform: translateX(0); }} to {{ transform: translateX(-100%); }} }}
+
+  .audio-bar {{ background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.75rem 0; }}
+  .audio-inner {{ max-width: 960px; margin: 0 auto; padding: 0 1rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }}
+  .audio-label {{ font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; }}
+  .lang-toggle {{ display: flex; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }}
+  .lang-btn {{ padding: 5px 14px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: var(--muted); font-family: 'Source Sans 3', sans-serif; transition: all 0.15s; }}
+  .lang-btn.active {{ background: var(--text); color: white; }}
+  .play-btn {{ display: flex; align-items: center; gap: 6px; padding: 6px 16px; font-size: 13px; font-weight: 600; background: var(--text); color: white; border: none; border-radius: 4px; cursor: pointer; font-family: 'Source Sans 3', sans-serif; transition: opacity 0.15s; }}
+  .play-btn:hover {{ opacity: 0.85; }}
+  .audio-progress {{ flex: 1; min-width: 140px; font-size: 12px; color: var(--muted); display: none; }}
+  .audio-progress.visible {{ display: block; }}
+  .progress-bar-wrap {{ height: 3px; background: var(--border); border-radius: 2px; margin-top: 4px; }}
+  .progress-bar-fill {{ height: 3px; background: var(--text); border-radius: 2px; width: 0%; transition: width 0.5s linear; }}
+
+  .container {{ max-width: 960px; margin: 0 auto; padding: 0 1rem; }}
+  .main {{ padding: 2rem 0 3rem; }}
+  .news-section {{ margin-bottom: 2.5rem; }}
+  .section-header {{ display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1.5px solid var(--text); }}
+  .section-dot {{ width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }}
+  .section-title {{ font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 500; }}
+  .card {{ display: block; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.25rem; transition: border-color 0.15s, box-shadow 0.15s; margin-bottom: 10px; }}
+  .card:hover {{ border-color: #999; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }}
+  .card-featured {{ padding: 1.25rem 1.5rem; }}
+  .card-grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }}
+  .card-grid .card {{ margin-bottom: 0; }}
+  .card-top {{ display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; gap: 8px; }}
+  .tag {{ font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; flex-shrink: 0; }}
+  .card-meta {{ font-size: 11px; color: var(--faint); }}
+  .card-title {{ font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 500; line-height: 1.35; }}
+  .card-title-big {{ font-size: 1.2rem; }}
+  .card-summary {{ margin-top: 0.5rem; font-size: 0.875rem; color: var(--muted); line-height: 1.55; }}
+  .footer {{ border-top: 2px solid var(--text); padding: 1.5rem 0; text-align: center; }}
+  .footer p {{ font-size: 12px; color: var(--muted); margin-bottom: 4px; }}
+  .footer strong {{ color: var(--text); }}
+  .sources-list {{ font-size: 11px; color: var(--faint); margin-top: 6px; }}
+  @media (max-width: 600px) {{ .card-grid {{ grid-template-columns: 1fr; }} }}
 </style>
 </head>
 <body>
-<div class="container">
-  <header class="masthead">
-    <h1>Mi Briefing</h1>
-    <p>{edition_es} — {date_display} — {now_et.strftime("%I:%M %p ET")}</p>
-  </header>
 
-  <div class="audio-bar">
-    <button class="play-btn" onclick="toggleAudio()" id="btn-text"><span>▶</span> Reproducir Resumen</button>
-    <div class="progress-bar"><div class="progress-fill" id="fill"></div></div>
-    <select id="lang" onchange="stopAudio()">
-      <option value="es">Español 🇪🇸</option>
-      <option value="en">English 🇬🇧</option>
-    </select>
+<header class="masthead">
+  <div class="container">
+    <p class="masthead-eyebrow">Tu resumen de noticias · Your news briefing</p>
+    <h1 class="masthead-logo">Mi Briefing</h1>
+    <div class="masthead-meta">
+      <span>{date_display}</span>
+      <span class="edition-badge">{edition_es}</span>
+      <span>Actualizado · {time_display}</span>
+    </div>
   </div>
+</header>
 
-  <main>{sections_html}</main>
-
-  <footer style="text-align: center; margin-top: 50px; color: #888; font-size: 12px;">
-    <p>Actualizado automáticamente via GitHub Actions</p>
-  </footer>
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    <span>S&amp;P 500 — en seguimiento</span><span>·</span>
+    <span>EUR/USD — en seguimiento</span><span>·</span>
+    <span>Petróleo WTI — en seguimiento</span><span>·</span>
+    <span>Bitcoin — en seguimiento</span><span>·</span>
+    <span>Oro — en seguimiento</span><span>·</span>
+    <span>Nasdaq — en seguimiento</span>
+  </div>
 </div>
 
-<script>
-  let audio = new Audio();
-  function toggleAudio() {{
-    if (!audio.paused) {{ 
-      stopAudio(); 
-    }} else {{
-      const lang = document.getElementById('lang').value;
-      audio.src = lang === 'es' ? 'news_es.mp3' : 'news_en.mp3';
-      audio.play().catch(e => alert("Error al reproducir: " + e));
-      document.getElementById('btn-text').innerHTML = '<span>⏹</span> Detener';
-      
-      audio.ontimeupdate = () => {{
-        const pct = (audio.currentTime / audio.duration * 100);
-        document.getElementById('fill').style.width = pct + '%';
-      }};
-      audio.onended = stopAudio;
-    }}
-  }}
+<div class="audio-bar">
+  <div class="audio-inner">
+    <div class="audio-label">🎧 Escuchar resumen</div>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-es" onclick="setLang('es')">Español</button>
+      <button class="lang-btn"        id="btn-en" onclick="setLang('en')">English</button>
+    </div>
+    <button class="play-btn" id="play-btn" onclick="toggleAudio()">
+      <span id="play-icon">▶</span>
+      <span id="play-label">Reproducir</span>
+    </button>
+    <div class="audio-progress" id="audio-progress">
+      <div id="progress-text">Iniciando...</div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill"></div></div>
+    </div>
+  </div>
+</div>
 
-  function stopAudio() {{
-    audio.pause(); 
-    audio.currentTime = 0;
-    document.getElementById('btn-text').innerHTML = '<span>▶</span> Reproducir Resumen';
-    document.getElementById('fill').style.width = '0%';
-  }}
+<main class="main">
+  <div class="container">
+    {sections_html}
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <p><strong>Mi Briefing</strong> — Resumen de noticias para familia y amigos</p>
+    <p>Actualizado automáticamente a las 6:00 AM y 2:00 PM ET</p>
+    <p class="sources-list">Fuentes: BBC News · Reuters · DW Español · El País</p>
+  </div>
+</footer>
+
+<script>
+const SCRIPTS = {audio_data};
+let currentLang = 'es', speaking = false, utterance = null;
+
+function setLang(lang) {{
+  currentLang = lang;
+  document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.getElementById('play-label').textContent = lang === 'es' ? 'Reproducir' : 'Play';
+  if (speaking) stopAudio();
+}}
+
+function toggleAudio() {{ speaking ? stopAudio() : startAudio(); }}
+
+function startAudio() {{
+  if (!window.speechSynthesis) {{ alert('Tu navegador no soporta síntesis de voz.'); return; }}
+  const text = SCRIPTS[currentLang];
+  utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang  = currentLang === 'es' ? 'es-US' : 'en-US';
+  utterance.rate  = 0.92;
+  utterance.pitch = 1.0;
+  const voices = window.speechSynthesis.getVoices();
+  const pick = voices.find(v => currentLang === 'es'
+    ? v.lang.startsWith('es') && /Google|Paulina|Monica|Jorge/.test(v.name)
+    : v.lang.startsWith('en') && /Google|Samantha|Alex/.test(v.name)
+  ) || voices.find(v => currentLang === 'es' ? v.lang.startsWith('es') : v.lang.startsWith('en'));
+  if (pick) utterance.voice = pick;
+  const total = text.length;
+  utterance.onboundary = (e) => {{
+    if (e.name === 'word') {{
+      const pct = Math.min(100, Math.round((e.charIndex / total) * 100));
+      document.getElementById('progress-fill').style.width = pct + '%';
+      document.getElementById('progress-text').textContent =
+        (currentLang === 'es' ? 'Reproduciendo' : 'Playing') + '... ' + pct + '%';
+    }}
+  }};
+  utterance.onend = utterance.onerror = resetPlayer;
+  window.speechSynthesis.speak(utterance);
+  speaking = true;
+  document.getElementById('play-icon').textContent  = '⏹';
+  document.getElementById('play-label').textContent = currentLang === 'es' ? 'Detener' : 'Stop';
+  document.getElementById('audio-progress').classList.add('visible');
+}}
+
+function stopAudio() {{ window.speechSynthesis.cancel(); resetPlayer(); }}
+
+function resetPlayer() {{
+  speaking = false;
+  document.getElementById('play-icon').textContent  = '▶';
+  document.getElementById('play-label').textContent = currentLang === 'es' ? 'Reproducir' : 'Play';
+  document.getElementById('progress-fill').style.width = '0%';
+  document.getElementById('audio-progress').classList.remove('visible');
+}}
+
+if (window.speechSynthesis) {{
+  speechSynthesis.getVoices();
+  speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+}}
 </script>
 </body>
 </html>"""
 
-# ── 8. GUARDAR EL HTML (ÚLTIMO PASO) ────────────────────────────────
+os.makedirs("docs", exist_ok=True)
 with open("docs/index.html", "w", encoding="utf-8") as f:
     f.write(HTML)
 
-print("¡Proceso finalizado con éxito! Archivos generados en /docs")
+print(f"OK  docs/index.html — {len(articles)} articulos — {edition_es} — {time_display}")
