@@ -9,14 +9,14 @@ import edge_tts
 from urllib.request import urlopen, Request
 from urllib.parse import quote
 
-# --- Configuración de Tiempo ---
+# ── 1. CONFIGURACIÓN DE TIEMPO (Texas/New York) ──────────────────────
 ET = pytz.timezone("America/New_York")
 now_et = datetime.now(ET)
 hour = now_et.hour
 edition = "morning" if hour < 13 else "afternoon"
 edition_es = "Edición matutina" if edition == "morning" else "Edición vespertina"
 
-# --- Traducción via MyMemory ---
+# ── 2. TRADUCCIÓN VIA MYMEMORY ───────────────────────────────────────
 def translate_to_spanish(text):
     if not text or len(text.strip()) == 0:
         return text
@@ -33,7 +33,7 @@ def translate_to_spanish(text):
         print(f"  Translation error: {e}")
     return text
 
-# --- RSS Feeds ---
+# ── 3. RSS FEEDS ─────────────────────────────────────────────────────
 FEEDS = [
     {"url": "https://feeds.bbci.co.uk/news/world/rss.xml",         "source": "BBC",         "lang": "en", "cat": "Internacional"},
     {"url": "https://feeds.reuters.com/reuters/worldNews",          "source": "Reuters",     "lang": "en", "cat": "Internacional"},
@@ -75,100 +75,143 @@ for feed_meta in FEEDS:
                 "lang": feed_meta["lang"]
             })
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error procesando {feed_meta['source']}: {e}")
 
-# --- Organización y HTML ---
+# ── 4. ORGANIZACIÓN POR CATEGORÍAS ───────────────────────────────────
 from collections import defaultdict
 by_cat = defaultdict(list)
-for a in articles: by_cat[a["cat"]].append(a)
+for a in articles:
+    by_cat[a["cat"]].append(a)
 
 def build_article_card(a, featured=False):
     source_flag = "🇬🇧" if a["lang"] == "en" else "🇪🇸"
     return f"""
     <a href="{a['link']}" target="_blank" class="card {'card-featured' if featured else 'card-normal'}">
-      <div class="card-top"><span class="tag">{a['cat']}</span><span class="card-meta">{source_flag} {a['source']} · {a['time']}</span></div>
+      <div class="card-top">
+        <span class="tag">{a['cat']}</span>
+        <span class="card-meta">{source_flag} {a['source']} · {a['time']}</span>
+      </div>
       <h3 class="card-title">{a['title_es']}</h3>
       {f'<p class="card-summary">{a["summary_es"]}</p>' if featured else ''}
     </a>"""
 
-sections_html = "".join([f'<section class="news-section"><h2>{c}</h2>' + build_article_card(by_cat[c][0], True) + '</div></section>' for c in by_cat])
+sections_html = ""
+for cat in ["Internacional", "Economía", "Tecnología"]:
+    items = by_cat.get(cat, [])
+    if items:
+        sections_html += f'<section class="news-section"><h2>{cat}</h2>'
+        sections_html += build_article_card(items[0], featured=True)
+        if len(items) > 1:
+            sections_html += '<div class="card-grid">'
+            for rest in items[1:]:
+                sections_html += build_article_card(rest, featured=False)
+            sections_html += '</div>'
+        sections_html += '</section>'
 
-# --- Preparación de Textos para Audio ---
+# ── 5. PREPARACIÓN DE TEXTOS PARA AUDIO ─────────────────────────────
 top_articles = [by_cat[c][0] for c in by_cat if by_cat[c]]
 date_display = now_et.strftime("%d/%m/%Y")
 
-text_es = f"Bienvenido a Mi Briefing. {edition_es}. Las noticias: " + " ".join([f"{a['title_es']}. Fuente: {a['source']}." for a in top_articles[:5]])
-text_en = f"Welcome to Mi Briefing. {edition}. Top stories: " + " ".join([f"{a['title_en']}. Source: {a['source']}." for a in top_articles[:5]])
+text_es = f"Bienvenido a Mi Briefing. {edition_es}. Las noticias principales de hoy son: " + " ".join([f"{a['title_es']}. Fuente: {a['source']}." for a in top_articles[:5]])
+text_en = f"Welcome to Mi Briefing. {edition} edition. Today's top stories: " + " ".join([f"{a['title_en']}. Source: {a['source']}." for a in top_articles[:5]])
 
-# --- Función para generar los MP3 ---
+# ── 6. FUNCIÓN ASÍNCRONA PARA GENERAR MP3 ───────────────────────────
 async def generate_audios():
     os.makedirs("docs", exist_ok=True)
+    print("Generando audios neuronales...")
+    # Usamos Alvaro para español (muy claro) y Andrew para inglés
     await edge_tts.Communicate(text_es, "es-ES-AlvaroNeural").save("docs/news_es.mp3")
     await edge_tts.Communicate(text_en, "en-US-AndrewNeural").save("docs/news_en.mp3")
 
+# Ejecutamos la generación de audio
 asyncio.run(generate_audios())
 
-# --- Generación del HTML Final ---
+# ── 7. GENERACIÓN DEL HTML FINAL ─────────────────────────────────────
 HTML = f"""<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mi Briefing</title>
+<title>Mi Briefing — {date_display}</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
 <style>
-  body {{ font-family: 'Source Sans 3', sans-serif; background: #f7f5f0; color: #1a1814; padding: 20px; }}
-  .container {{ max-width: 800px; margin: 0 auto; }}
-  .masthead {{ text-align: center; border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 20px; }}
-  .card {{ background: #fff; border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; display: block; text-decoration: none; color: inherit; border-radius: 5px; }}
-  .tag {{ font-weight: bold; text-transform: uppercase; font-size: 10px; background: #eee; padding: 2px 5px; }}
-  .audio-bar {{ background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; border: 1px solid #ddd; }}
-  .play-btn {{ background: #000; color: #fff; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; font-weight: bold; }}
-  .progress-bar {{ flex: 1; height: 5px; background: #eee; border-radius: 5px; position: relative; overflow: hidden; }}
+  * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+  body {{ font-family: 'Source Sans 3', sans-serif; background: #f7f5f0; color: #1a1814; line-height: 1.6; padding: 20px; }}
+  .container {{ max-width: 900px; margin: 0 auto; }}
+  .masthead {{ text-align: center; border-bottom: 3px solid #000; padding-bottom: 20px; margin-bottom: 30px; }}
+  .masthead h1 {{ font-family: 'Playfair Display', serif; font-size: 3rem; }}
+  
+  .audio-bar {{ background: #fff; padding: 20px; border-radius: 10px; margin-bottom: 30px; display: flex; align-items: center; gap: 20px; border: 1px solid #ddd; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }}
+  .play-btn {{ background: #000; color: #fff; border: none; padding: 12px 25px; cursor: pointer; border-radius: 6px; font-weight: 600; display: flex; align-items: center; gap: 10px; }}
+  .progress-bar {{ flex: 1; height: 6px; background: #eee; border-radius: 3px; overflow: hidden; }}
   .progress-fill {{ width: 0%; height: 100%; background: #000; transition: width 0.3s; }}
+  select {{ padding: 8px; border-radius: 5px; border: 1px solid #ccc; }}
+
+  .news-section {{ margin-bottom: 40px; }}
+  .news-section h2 {{ font-family: 'Playfair Display', serif; border-bottom: 1px solid #000; margin-bottom: 15px; text-transform: uppercase; font-size: 1.2rem; }}
+  .card {{ background: #fff; border: 1px solid #ddd; padding: 20px; margin-bottom: 15px; display: block; text-decoration: none; color: inherit; border-radius: 8px; transition: 0.2s; }}
+  .card:hover {{ transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }}
+  .card-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }}
+  .tag {{ font-weight: bold; font-size: 10px; background: #000; color: #fff; padding: 3px 8px; border-radius: 3px; }}
+  .card-meta {{ font-size: 12px; color: #888; margin-left: 10px; }}
+  .card-title {{ margin-top: 10px; font-family: 'Playfair Display', serif; font-size: 1.3rem; }}
+  
+  @media (max-width: 600px) {{ .card-grid {{ grid-template-columns: 1fr; }} .masthead h1 {{ font-size: 2rem; }} }}
 </style>
 </head>
 <body>
 <div class="container">
   <header class="masthead">
     <h1>Mi Briefing</h1>
-    <p>{edition_es} — {date_display}</p>
+    <p>{edition_es} — {date_display} — {now_et.strftime("%I:%M %p ET")}</p>
   </header>
 
   <div class="audio-bar">
-    <button class="play-btn" onclick="toggleAudio()" id="btn-text">▶ Reproducir Resumen</button>
+    <button class="play-btn" onclick="toggleAudio()" id="btn-text"><span>▶</span> Reproducir Resumen</button>
     <div class="progress-bar"><div class="progress-fill" id="fill"></div></div>
     <select id="lang" onchange="stopAudio()">
-      <option value="es">Español</option>
-      <option value="en">English</option>
+      <option value="es">Español 🇪🇸</option>
+      <option value="en">English 🇬🇧</option>
     </select>
   </div>
 
   <main>{sections_html}</main>
+
+  <footer style="text-align: center; margin-top: 50px; color: #888; font-size: 12px;">
+    <p>Actualizado automáticamente via GitHub Actions</p>
+  </footer>
 </div>
 
 <script>
   let audio = new Audio();
   function toggleAudio() {{
-    if (!audio.paused) {{ stopAudio(); return; }}
-    const lang = document.getElementById('lang').value;
-    audio.src = lang === 'es' ? 'news_es.mp3' : 'news_en.mp3';
-    audio.play();
-    document.getElementById('btn-text').innerText = '⏹ Detener';
-    audio.ontimeupdate = () => {{
-      document.getElementById('fill').style.width = (audio.currentTime / audio.duration * 100) + '%';
-    }};
-    audio.onended = stopAudio;
+    if (!audio.paused) {{ 
+      stopAudio(); 
+    }} else {{
+      const lang = document.getElementById('lang').value;
+      audio.src = lang === 'es' ? 'news_es.mp3' : 'news_en.mp3';
+      audio.play().catch(e => alert("Error al reproducir: " + e));
+      document.getElementById('btn-text').innerHTML = '<span>⏹</span> Detener';
+      
+      audio.ontimeupdate = () => {{
+        const pct = (audio.currentTime / audio.duration * 100);
+        document.getElementById('fill').style.width = pct + '%';
+      }};
+      audio.onended = stopAudio;
+    }}
   }}
+
   function stopAudio() {{
-    audio.pause(); audio.currentTime = 0;
-    document.getElementById('btn-text').innerText = '▶ Reproducir Resumen';
+    audio.pause(); 
+    audio.currentTime = 0;
+    document.getElementById('btn-text').innerHTML = '<span>▶</span> Reproducir Resumen';
     document.getElementById('fill').style.width = '0%';
   }}
 </script>
 </body>
 </html>"""
 
+# ── 8. GUARDAR EL HTML (ÚLTIMO PASO) ────────────────────────────────
 with open("docs/index.html", "w", encoding="utf-8") as f:
     f.write(HTML)
 
-print("¡Listo! HTML y Audios generados en /docs")
+print("¡Proceso finalizado con éxito! Archivos generados en /docs")
