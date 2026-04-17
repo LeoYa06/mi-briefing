@@ -140,7 +140,36 @@ sections_html = ""
 for cat in ["Internacional", "Economía", "Tecnología", "Clima"]:
     sections_html += build_section(cat, by_cat.get(cat, []))
 
+# ── Audio scripts (top featured article per category) ─────────────────────
+top_articles = [by_cat[c][0] for c in ["Internacional","Economía","Tecnología","Clima"] if by_cat.get(c)]
 
+# Date strings
+months_en_es = {
+    "January":"enero","February":"febrero","March":"marzo","April":"abril",
+    "May":"mayo","June":"junio","July":"julio","August":"agosto",
+    "September":"septiembre","October":"octubre","November":"noviembre","December":"diciembre"
+}
+days_en_es = {
+    "Monday":"Lunes","Tuesday":"Martes","Wednesday":"Miércoles","Thursday":"Jueves",
+    "Friday":"Viernes","Saturday":"Sábado","Sunday":"Domingo"
+}
+date_es = now_et.strftime("%-d de %B de %Y")
+for en, es in months_en_es.items():
+    date_es = date_es.replace(en, es)
+day_en = now_et.strftime("%A")
+date_display = f"{days_en_es.get(day_en, day_en)}, {date_es}"
+time_display  = now_et.strftime("%-I:%M %p ET")
+
+intro_es = f"Bienvenido a Mi Briefing. {edition_es} del {date_display}. Las principales noticias de hoy son: "
+intro_en = f"Welcome to Mi Briefing. {edition_es}, {date_display}. Here are today's top stories: "
+items_es = [f"Noticia {i+1}: {a['title_es']}. Fuente: {a['source']}." for i, a in enumerate(top_articles[:6])]
+items_en = [f"Story {i+1}: {a['title']}. Source: {a['source']}."     for i, a in enumerate(top_articles[:6])]
+outro_es = "Eso es todo por ahora. Visita Mi Briefing para leer más detalles."
+outro_en = "That's all for now. Visit Mi Briefing to read more."
+audio_data = json.dumps({
+    "es": intro_es + " ".join(items_es) + " " + outro_es,
+    "en": intro_en + " ".join(items_en) + " " + outro_en,
+})
 
 # ── HTML ──────────────────────────────────────────────────────────────────
 HTML = f"""<!DOCTYPE html>
