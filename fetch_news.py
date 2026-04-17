@@ -115,24 +115,31 @@ date_display = now_et.strftime("%d/%m/%Y")
 text_es = f"Bienvenido a Mi Briefing. {edition_es}. Las noticias principales de hoy son: " + " ".join([f"{a['title_es']}. Fuente: {a['source']}." for a in top_articles[:5]])
 text_en = f"Welcome to Mi Briefing. {edition} edition. Today's top stories: " + " ".join([f"{a['title_en']}. Source: {a['source']}." for a in top_articles[:5]])
 
-# --- Función para generar los MP3 REFORZADA ---
 async def generate_audios():
     os.makedirs("docs", exist_ok=True)
-    print("Iniciando síntesis de voz neuronal...")
     
-    # Generamos el objeto de comunicación
-    communicate_es = edge_tts.Communicate(text_es, "es-ES-AlvaroNeural")
-    communicate_en = edge_tts.Communicate(text_en, "en-US-AndrewNeural")
-    
-    # IMPORTANTE: Esperamos explícitamente a que se escriba el archivo
-    await communicate_es.save("docs/news_es.mp3")
-    await communicate_en.save("docs/news_en.mp3")
-    
-    # Verificación de seguridad: ¿el archivo pesa más de 0 bytes?
-    if os.path.exists("docs/news_es.mp3") and os.path.getsize("docs/news_es.mp3") > 0:
-        print(f"Éxito: Audio español generado ({os.path.getsize('docs/news_es.mp3')} bytes)")
-    else:
-        print("Error: El audio español quedó vacío.")
+    # Intentaremos hasta 3 veces por si falla la conexión
+    for intento in range(3):
+        try:
+            print(f"Intento {intento + 1}: Generando audios neuronales...")
+            
+            communicate_es = edge_tts.Communicate(text_es, "es-ES-AlvaroNeural")
+            communicate_en = edge_tts.Communicate(text_en, "en-US-AndrewNeural")
+            
+            # Guardamos los archivos
+            await communicate_es.save("docs/news_es.mp3")
+            await communicate_en.save("docs/news_en.mp3")
+            
+            # Verificamos si el archivo de audio tiene un tamaño real (ej. más de 2000 bytes)
+            if os.path.exists("docs/news_es.mp3") and os.path.getsize("docs/news_es.mp3") > 100:
+                print(f"¡Éxito! Audio generado correctamente ({os.path.getsize('docs/news_es.mp3')} bytes)")
+                return # Salimos del bucle si tuvo éxito
+            
+        except Exception as e:
+            print(f"Error en intento {intento + 1}: {e}")
+            await asyncio.sleep(2) # Esperamos 2 segundos antes de reintentar
+
+    print("ADVERTENCIA: No se pudo generar un audio válido tras 3 intentos.")
 
 # Ejecutamos la generación
 asyncio.run(generate_audios())
