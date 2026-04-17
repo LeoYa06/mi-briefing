@@ -115,17 +115,27 @@ date_display = now_et.strftime("%d/%m/%Y")
 text_es = f"Bienvenido a Mi Briefing. {edition_es}. Las noticias principales de hoy son: " + " ".join([f"{a['title_es']}. Fuente: {a['source']}." for a in top_articles[:5]])
 text_en = f"Welcome to Mi Briefing. {edition} edition. Today's top stories: " + " ".join([f"{a['title_en']}. Source: {a['source']}." for a in top_articles[:5]])
 
-# ── 6. FUNCIÓN ASÍNCRONA PARA GENERAR MP3 ───────────────────────────
+# --- Función para generar los MP3 REFORZADA ---
 async def generate_audios():
     os.makedirs("docs", exist_ok=True)
-    print("Generando audios neuronales...")
-    # Usamos Alvaro para español (muy claro) y Andrew para inglés
-    await edge_tts.Communicate(text_es, "es-ES-AlvaroNeural").save("docs/news_es.mp3")
-    await edge_tts.Communicate(text_en, "en-US-AndrewNeural").save("docs/news_en.mp3")
+    print("Iniciando síntesis de voz neuronal...")
+    
+    # Generamos el objeto de comunicación
+    communicate_es = edge_tts.Communicate(text_es, "es-ES-AlvaroNeural")
+    communicate_en = edge_tts.Communicate(text_en, "en-US-AndrewNeural")
+    
+    # IMPORTANTE: Esperamos explícitamente a que se escriba el archivo
+    await communicate_es.save("docs/news_es.mp3")
+    await communicate_en.save("docs/news_en.mp3")
+    
+    # Verificación de seguridad: ¿el archivo pesa más de 0 bytes?
+    if os.path.exists("docs/news_es.mp3") and os.path.getsize("docs/news_es.mp3") > 0:
+        print(f"Éxito: Audio español generado ({os.path.getsize('docs/news_es.mp3')} bytes)")
+    else:
+        print("Error: El audio español quedó vacío.")
 
-# Ejecutamos la generación de audio
+# Ejecutamos la generación
 asyncio.run(generate_audios())
-
 # ── 7. GENERACIÓN DEL HTML FINAL ─────────────────────────────────────
 HTML = f"""<!DOCTYPE html>
 <html lang="es">
