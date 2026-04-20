@@ -16,17 +16,26 @@
   body { font-family: 'Source Sans 3', sans-serif; background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.6; }
   a { color: inherit; text-decoration: none; }
 
+  /* MASTHEAD */
   .masthead { background: var(--surface); border-bottom: 2px solid var(--text); padding: 1.5rem 0 1rem; text-align: center; }
   .masthead-eyebrow { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
   .masthead-logo { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 700; letter-spacing: -1px; line-height: 1; margin-bottom: 0.5rem; }
   .masthead-meta { display: flex; justify-content: center; align-items: center; gap: 1.5rem; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 0.75rem; padding-top: 0.75rem; flex-wrap: wrap; }
   .edition-badge { background: var(--text); color: white; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 2px; letter-spacing: 1px; text-transform: uppercase; }
 
+  /* SECTION NAV */
+  .section-nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.5rem 0; overflow-x: auto; white-space: nowrap; }
+  .section-nav-inner { max-width: 960px; margin: 0 auto; padding: 0 1rem; display: flex; gap: 6px; }
+  .nav-pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 4px 14px; border-radius: 20px; border: 1px solid var(--border); color: var(--muted); cursor: pointer; text-decoration: none; transition: all 0.15s; }
+  .nav-pill:hover { background: var(--text); color: white; border-color: var(--text); }
+
+  /* TICKER */
   .ticker-wrap { background: var(--text); color: white; font-size: 12px; font-weight: 500; overflow: hidden; white-space: nowrap; padding: 6px 0; }
-  .ticker-inner { display: inline-block; animation: ticker 35s linear infinite; padding-left: 100%; }
+  .ticker-inner { display: inline-block; animation: ticker 40s linear infinite; padding-left: 100%; }
   .ticker-inner span { margin: 0 2rem; }
   @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-100%); } }
 
+  /* AUDIO */
   .audio-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.75rem 0; }
   .audio-inner { max-width: 960px; margin: 0 auto; padding: 0 1rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .audio-label { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; }
@@ -40,28 +49,40 @@
   .progress-bar-wrap { height: 3px; background: var(--border); border-radius: 2px; margin-top: 4px; }
   .progress-bar-fill { height: 3px; background: var(--text); border-radius: 2px; width: 0%; transition: width 0.5s linear; }
 
+  /* LAYOUT */
   .container { max-width: 960px; margin: 0 auto; padding: 0 1rem; }
   .main { padding: 2rem 0 3rem; }
-  .news-section { margin-bottom: 2.5rem; }
+
+  /* SECTIONS */
+  .news-section { margin-bottom: 3rem; scroll-margin-top: 80px; }
   .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1.5px solid var(--text); }
   .section-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .section-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 500; }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 500; }
+
+  /* CARDS */
   .card { display: block; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.25rem; transition: border-color 0.15s, box-shadow 0.15s; margin-bottom: 10px; }
   .card:hover { border-color: #999; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
   .card-featured { padding: 1.25rem 1.5rem; }
-  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
-  .card-grid .card { margin-bottom: 0; }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin-bottom: 10px; }
+  .card-grid-sm { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin-bottom: 10px; }
+  .card-grid .card, .card-grid-sm .card { margin-bottom: 0; }
   .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; gap: 8px; }
-  .tag { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; flex-shrink: 0; }
-  .card-meta { font-size: 11px; color: var(--faint); }
-  .card-title { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 500; line-height: 1.35; }
+  .tag { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; flex-shrink: 0; white-space: nowrap; }
+  .card-meta { font-size: 11px; color: var(--faint); white-space: nowrap; }
+  .card-title { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 500; line-height: 1.35; color: var(--text); }
   .card-title-big { font-size: 1.2rem; }
   .card-summary { margin-top: 0.5rem; font-size: 0.875rem; color: var(--muted); line-height: 1.55; }
+
+  /* FOOTER */
   .footer { border-top: 2px solid var(--text); padding: 1.5rem 0; text-align: center; }
   .footer p { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
   .footer strong { color: var(--text); }
-  .sources-list { font-size: 11px; color: var(--faint); margin-top: 6px; }
-  @media (max-width: 600px) { .card-grid { grid-template-columns: 1fr; } }
+  .sources-list { font-size: 11px; color: var(--faint); margin-top: 6px; line-height: 1.8; }
+
+  @media (max-width: 600px) {
+    .card-grid, .card-grid-sm { grid-template-columns: 1fr; }
+    .masthead-meta { gap: 0.5rem; }
+  }
 </style>
 </head>
 <body>
@@ -73,7 +94,7 @@
     <div class="masthead-meta">
       <span>Domingo, 19 de abril de 2026</span>
       <span class="edition-badge">Edición vespertina</span>
-      <span>Actualizado · 3:41 PM ET</span>
+      <span>Actualizado · 10:55 PM ET</span>
     </div>
   </div>
 </header>
@@ -81,13 +102,26 @@
 <div class="ticker-wrap">
   <div class="ticker-inner">
     <span>S&amp;P 500 — en seguimiento</span><span>·</span>
+    <span>Dow Jones — en seguimiento</span><span>·</span>
+    <span>Nasdaq — en seguimiento</span><span>·</span>
     <span>EUR/USD — en seguimiento</span><span>·</span>
     <span>Petróleo WTI — en seguimiento</span><span>·</span>
     <span>Bitcoin — en seguimiento</span><span>·</span>
     <span>Oro — en seguimiento</span><span>·</span>
-    <span>Nasdaq — en seguimiento</span>
+    <span>Bono 10Y EE.UU. — en seguimiento</span>
   </div>
 </div>
+
+<nav class="section-nav">
+  <div class="section-nav-inner">
+    <a class="nav-pill" href="#internacional">🌍 Internacional</a>
+    <a class="nav-pill" href="#geopolitica">🗺️ Geopolítica</a>
+    <a class="nav-pill" href="#mercados">📈 Mercados</a>
+    <a class="nav-pill" href="#politica">🏛️ Política EE.UU.</a>
+    <a class="nav-pill" href="#ciencia">🔬 Ciencia y Salud</a>
+    <a class="nav-pill" href="#deportes">⚽ Deportes</a>
+  </div>
+</nav>
 
 <div class="audio-bar">
   <div class="audio-inner">
@@ -108,169 +142,303 @@
 </div>
 
 <main class="main">
-  <div class="container">
-    
+  <div class="container" id="internacional">
     <section class="news-section">
       <div class="section-header">
         <span class="section-dot" style="background:#1a3a5c"></span>
-        <h2 class="section-title">Internacional</h2>
+        <h2 class="section-title">🌍 Internacional</h2>
       </div>
-      
-    <a href="https://www.bbc.com/news/articles/c0q9v1p2dd2o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
+      <a href="https://www.bbc.com/news/articles/c239500dx8ro?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
       <div class="card-top">
         <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
-        <span class="card-meta">🇬🇧 BBC · 3:22 PM ET</span>
+        <span class="card-meta">🇬🇧 BBC World · 9:38 PM ET</span>
       </div>
-      <h3 class="card-title card-title-big">Ocho niños muertos en tiroteo en Luisiana, dice la policía</h3>
-      <p class="card-summary">Los niños, de entre uno y 14 años, murieron en un tiroteo en Shreveport, Louisiana, que la policía describe como un "disturbio doméstico".</p>
-    </a><div class="card-grid">
-    <a href="https://www.bbc.com/news/articles/c8ejn778j4do?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
+      <h3 class="card-title card-title-big">Estados Unidos intercepta y confisca un buque de carga con bandera iraní, dice Trump</h3>
+      <p class="card-summary">Teherán promete represalias pronto por lo que llama un "acto de piratería armada", que se produce mientras Estados Unidos se prepara para una segunda ronda de conversaciones.</p>
+    </a><div class="card-grid"><a href="https://www.bbc.com/news/articles/c0q9v1p2dd2o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card ">
       <div class="card-top">
         <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
-        <span class="card-meta">🇬🇧 BBC · 1:48 PM ET</span>
+        <span class="card-meta">🇬🇧 BBC World · 6:54 PM ET</span>
       </div>
-      <h3 class="card-title ">El jefe de policía de Ucrania dimite después de que los agentes huyeran de un tiroteo</h3>
+      <h3 class="card-title ">Ocho niños muertos en tiroteo en Luisiana, dice la policía</h3>
       
-    </a>
-    <a href="https://www.bbc.com/news/articles/cvg07lq5ql4o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
+    </a><a href="https://www.bbc.com/news/articles/cvg4jnn131qo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card ">
       <div class="card-top">
         <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
-        <span class="card-meta">🇬🇧 BBC · 8:52 AM ET</span>
+        <span class="card-meta">🇬🇧 BBC World · 5:09 PM ET</span>
       </div>
-      <h3 class="card-title ">Veneno para ratas encontrado en un frasco de comida para bebés HiPP en Austria, dice la policía</h3>
+      <h3 class="card-title ">Teherán nunca cederá el control del Estrecho de Ormuz, dice un político iraní de alto rango a la BBC</h3>
       
-    </a>
-    <a href="https://elpais.com/internacional/2026-04-19/trump-retoma-las-negociaciones-con-iran-pero-amenaza-con-destruir-todas-sus-centrales-electricas-si-no-acepta-su-plan.html" target="_blank" rel="noopener" class="card card-normal">
+    </a><a href="https://www.theguardian.com/us-news/2026/apr/19/woman-arrested-la-arms-trafficking-iran-africa" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
+        <span class="card-meta">🇬🇧 The Guardian · 5:56 PM ET</span>
+      </div>
+      <h3 class="card-title ">Arrestan a mujer iraní-estadounidense en Los Ángeles por presunto tráfico de armas</h3>
+      
+    </a></div><div class="card-grid card-grid-sm"><a href="https://www.theguardian.com/technology/2026/apr/17/kenyan-outsourcing-company-for-meta-sacks-workers" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
+        <span class="card-meta">🇬🇧 The Guardian · 12:59 PM ET</span>
+      </div>
+      <h3 class="card-title ">Empresa keniana despide a más de 1.000 trabajadores tras perder contrato con Meta</h3>
+      
+    </a><a href="https://www.theguardian.com/environment/2026/apr/17/weather-tracker-hail-covers-parts-of-tunisia-and-algeria-like-snow" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
+        <span class="card-meta">🇬🇧 The Guardian · 3:49 AM ET</span>
+      </div>
+      <h3 class="card-title ">Seguimiento meteorológico: el granizo cubre partes de Túnez y Argelia como la nieve</h3>
+      
+    </a><a href="https://elpais.com/internacional/2026-04-19/trump-retoma-las-negociaciones-con-iran-pero-amenaza-con-destruir-todas-sus-centrales-electricas-si-no-acepta-su-plan.html" target="_blank" rel="noopener" class="card ">
       <div class="card-top">
         <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
         <span class="card-meta">🇪🇸 El País · 1:49 PM ET</span>
       </div>
       <h3 class="card-title ">Trump retoma las negociaciones, pero amenaza con hacer “volar Irán por los aires” si no acepta su plan</h3>
       
-    </a>
-    <a href="https://elpais.com/us/2026-04-19/un-hombre-mata-a-ocho-ninos-en-un-tiroteo-en-luisiana.html" target="_blank" rel="noopener" class="card card-normal">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
-        <span class="card-meta">🇪🇸 El País · 12:55 PM ET</span>
+    </a></div></section><section class="news-section">
+      <div class="section-header">
+        <span class="section-dot" style="background:#2d1a5c"></span>
+        <h2 class="section-title">🗺️ Geopolítica</h2>
       </div>
-      <h3 class="card-title ">Un hombre mata a tiros a ocho niños, algunos de su familia, en Luisiana</h3>
-      
-    </a>
-    <a href="https://elpais.com/internacional/2026-04-19/el-candidato-prorruso-se-perfila-como-proximo-primer-ministro-de-bulgaria.html" target="_blank" rel="noopener" class="card card-normal">
+      <a href="https://foreignpolicy.com/2026/04/17/ukraine-green-reconstruction-renewable-energy-build-back-better/" target="_blank" rel="noopener" class="card card-featured">
       <div class="card-top">
-        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
-        <span class="card-meta">🇪🇸 El País · 2:58 PM ET</span>
+        <span class="tag" style="background:#ede8fa;color:#2d1a5c">Geopolítica</span>
+        <span class="card-meta">🇬🇧 Foreign Policy · 5:16 PM ET</span>
       </div>
-      <h3 class="card-title ">El candidato prorruso se perfila como próximo primer ministro de Bulgaria</h3>
+      <h3 class="card-title card-title-big">Ucrania tiene un plan para reconstruir mejor</h3>
+      <p class="card-summary">El país devastado por la guerra quiere reconstruirse de una manera que sea ambiental, social y geopolíticamente más sostenible.</p>
+    </a><div class="card-grid"><a href="https://foreignpolicy.com/2026/04/17/strait-hormuz-completely-open-iran-trump-us-blockade-oil/" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#ede8fa;color:#2d1a5c">Geopolítica</span>
+        <span class="card-meta">🇬🇧 Foreign Policy · 4:08 PM ET</span>
+      </div>
+      <h3 class="card-title ">Irán dice que el estrecho de Ormuz está "completamente abierto"</h3>
       
-    </a></div>
-    </section>
-    <section class="news-section">
+    </a><a href="https://foreignpolicy.com/2026/04/17/order-hierarchy-medieval-chaos-power-security/" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#ede8fa;color:#2d1a5c">Geopolítica</span>
+        <span class="card-meta">🇬🇧 Foreign Policy · 3:30 PM ET</span>
+      </div>
+      <h3 class="card-title ">Solicitar posiciones sin pedido</h3>
+      
+    </a></div></section><section class="news-section">
       <div class="section-header">
         <span class="section-dot" style="background:#1a4a2e"></span>
-        <h2 class="section-title">Economía</h2>
+        <h2 class="section-title">📈 Mercados</h2>
       </div>
-      
-    <a href="https://www.bbc.com/news/articles/cwyx2q86lgpo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
+      <a href="https://www.marketwatch.com/story/investors-brace-for-renewed-volatility-after-this-weekends-iran-developments-4b707c11?mod=mw_rss_topstories" target="_blank" rel="noopener" class="card card-featured">
       <div class="card-top">
-        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Economía</span>
-        <span class="card-meta">🇬🇧 BBC Negocios · 7:33 PM ET</span>
+        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Mercados</span>
+        <span class="card-meta">🇬🇧 MarketWatch · 10:01 PM ET</span>
       </div>
-      <h3 class="card-title card-title-big">Las tasas hipotecarias muestran signos de caer después del pico de la guerra de Irán</h3>
-      <p class="card-summary">Los principales prestamistas hacen reducciones de tasas a medida que los mercados se animan por una posible tregua en la guerra de Irán.</p>
-    </a><div class="card-grid">
-    <a href="https://www.bbc.com/news/articles/ce3578g32d0o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
+      <h3 class="card-title card-title-big">Los futuros de las acciones estadounidenses caen y el petróleo sube a medida que los acontecimientos de Irán de este fin de semana reavivan la incertidumbre</h3>
+      <p class="card-summary">Después de un repunte de tres semanas que ha llevado al S&amp;P 500 a nuevos máximos históricos, los inversores se preparan de nuevo para la incertidumbre tras un torbellino de acontecimientos de fin de semana relacionados con la guerra con Irán.</p>
+    </a><div class="card-grid"><a href="https://www.marketwatch.com/story/im-planning-to-retire-at-60-should-i-sell-my-house-and-invest-the-500-000-2b504dd9?mod=mw_rss_topstories" target="_blank" rel="noopener" class="card ">
       <div class="card-top">
-        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Economía</span>
-        <span class="card-meta">🇬🇧 BBC Negocios · 7:16 PM ET</span>
+        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Mercados</span>
+        <span class="card-meta">🇬🇧 MarketWatch · 7:42 PM ET</span>
       </div>
-      <h3 class="card-title ">'Soy el afortunado': más de uno de cada tres jóvenes vive con sus padres</h3>
+      <h3 class="card-title ">Planeo jubilarme a los 60. ¿Debo vender mi casa e invertir los $ 500.000?</h3>
       
-    </a>
-    <a href="https://www.bbc.com/news/articles/ckg045z73z1o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
+    </a><a href="https://www.marketwatch.com/story/i-have-full-guardianship-my-son-has-special-needs-if-i-buy-him-a-condo-will-that-hurt-his-benefits-6f26e904?mod=mw_rss_topstories" target="_blank" rel="noopener" class="card ">
       <div class="card-top">
-        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Economía</span>
-        <span class="card-meta">🇬🇧 BBC Negocios · 2:06 AM ET</span>
+        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Mercados</span>
+        <span class="card-meta">🇬🇧 MarketWatch · 7:41 PM ET</span>
       </div>
-      <h3 class="card-title ">Los precios del petróleo caen cuando Irán dice que el Estrecho de Ormuz está "abierto" durante el alto el fuego</h3>
+      <h3 class="card-title ">‘Tengo plena tutela’: Mi hijo tiene necesidades especiales. Si le compro un condominio, ¿eso perjudicará sus beneficios?</h3>
       
-    </a></div>
-    </section>
-    <section class="news-section">
+    </a><a href="https://www.theguardian.com/business/2026/apr/19/uber-lyft-drivers-gas-prices" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Mercados</span>
+        <span class="card-meta">🇬🇧 Guardian Biz · 6:00 AM ET</span>
+      </div>
+      <h3 class="card-title ">‘No quiero desperdiciar el combustible’: los socios de la App de Uber y Lyft se tambalean a medida que los precios del combustible se disparan</h3>
+      
+    </a></div><div class="card-grid card-grid-sm"><a href="https://www.theguardian.com/us-news/2026/apr/19/trump-energy-secretary-chris-wright-gas-prices" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Mercados</span>
+        <span class="card-meta">🇬🇧 Guardian Biz · 11:54 AM ET</span>
+      </div>
+      <h3 class="card-title ">El secretario de Energía de Trump dice que los precios de la gasolina podrían no bajar de $ 3 por galón hasta 2027</h3>
+      
+    </a><a href="https://www.theguardian.com/world/2026/apr/18/iran-war-bets-ethics-concerns" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Mercados</span>
+        <span class="card-meta">🇬🇧 Guardian Biz · 7:00 AM ET</span>
+      </div>
+      <h3 class="card-title ">Los traders realizaron más de 1000 millones de $ en apuestas perfectamente sincronizadas sobre la guerra de Irán. ¿Qué está pasando?</h3>
+      
+    </a><a href="https://www.bbc.com/news/articles/c5yjzy35825o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Mercados</span>
+        <span class="card-meta">🇬🇧 BBC Business · 10:29 PM ET</span>
+      </div>
+      <h3 class="card-title ">Los precios del petróleo suben después de que Trump dice que se incautó</h3>
+      
+    </a></div></section><section class="news-section">
       <div class="section-header">
-        <span class="section-dot" style="background:#3a1a5c"></span>
-        <h2 class="section-title">Tecnología</h2>
+        <span class="section-dot" style="background:#5c2a1a"></span>
+        <h2 class="section-title">🏛️ Política EE.UU.</h2>
       </div>
-      
-    <a href="https://www.bbc.com/news/articles/cyv10e1d13po?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
+      <a href="https://www.bbc.com/news/articles/c0q9v1p2dd2o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
       <div class="card-top">
-        <span class="tag" style="background:#f0e8fa;color:#3a1a5c">Tecnología</span>
-        <span class="card-meta">🇬🇧 BBC Tech · 8:37 PM ET</span>
+        <span class="tag" style="background:#faeee8;color:#5c2a1a">Política EE.UU.</span>
+        <span class="card-meta">🇬🇧 BBC US · 6:54 PM ET</span>
       </div>
-      <h3 class="card-title card-title-big">La Casa Blanca y Anthropic mantienen una reunión "productiva" en medio de los temores sobre el modelo Mythos</h3>
-      <p class="card-summary">La discusión es una señal de que la tecnología de la empresa de inteligencia artificial puede ser demasiado crítica incluso para que el gobierno de los EE. UU. pueda prescindir de ella.</p>
-    </a><div class="card-grid">
-    <a href="https://www.bbc.com/news/articles/cp9vppem4evo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
+      <h3 class="card-title card-title-big">Ocho niños muertos en tiroteo en Luisiana, dice la policía</h3>
+      <p class="card-summary">Los niños, de entre uno y 14 años, murieron en un tiroteo que la policía describe como un "disturbio doméstico".</p>
+    </a><div class="card-grid"><a href="https://www.bbc.com/news/articles/cge0grppe3po?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card ">
       <div class="card-top">
-        <span class="tag" style="background:#f0e8fa;color:#3a1a5c">Tecnología</span>
-        <span class="card-meta">🇬🇧 BBC Tech · 3:05 PM ET</span>
+        <span class="tag" style="background:#faeee8;color:#5c2a1a">Política EE.UU.</span>
+        <span class="card-meta">🇬🇧 BBC US · 7:02 PM ET</span>
       </div>
-      <h3 class="card-title ">Tinder y Zoom ofrecen escaneos oculares "prueba de humanidad" para combatir la IA</h3>
+      <h3 class="card-title ">Las sospechas sobre el uso de información privilegiada se ciernen sobre la presidencia de Trump</h3>
       
-    </a>
-    <a href="https://www.bbc.com/news/articles/crk1py1jgzko?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
+    </a><a href="https://www.bbc.com/news/articles/cdxd8g47wnlo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card ">
       <div class="card-top">
-        <span class="tag" style="background:#f0e8fa;color:#3a1a5c">Tecnología</span>
-        <span class="card-meta">🇬🇧 BBC Tech · 9:41 AM ET</span>
+        <span class="tag" style="background:#faeee8;color:#5c2a1a">Política EE.UU.</span>
+        <span class="card-meta">🇬🇧 BBC US · 3:25 PM ET</span>
       </div>
-      <h3 class="card-title ">¿Qué es Claude Mythos y qué riesgos plantea?</h3>
+      <h3 class="card-title ">El primer ministro de Ontario, Doug Ford, acuerda vender un jet privado de $ 21 millones tras las protestas</h3>
       
-    </a></div>
-    </section>
-    <section class="news-section">
+    </a><a href="https://www.theguardian.com/us-news/2026/apr/20/trump-administration-news-updates-today" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#faeee8;color:#5c2a1a">Política EE.UU.</span>
+        <span class="card-meta">🇬🇧 Guardian US · 8:36 PM ET</span>
+      </div>
+      <h3 class="card-title ">Noticias Trump de un vistazo: El precio del petróleo vuelve a subir mientras Irán acusa a Estados Unidos de romper el alto el fuego</h3>
+      
+    </a></div><div class="card-grid card-grid-sm"><a href="https://www.theguardian.com/us-news/2026/apr/19/catholics-mass-trump-pope-leo-georgia" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#faeee8;color:#5c2a1a">Política EE.UU.</span>
+        <span class="card-meta">🇬🇧 Guardian US · 8:23 PM ET</span>
+      </div>
+      <h3 class="card-title ">‘Primero somos católicos’: los asistentes a la misa dominical opinan sobre la enemistad de Trump con el Papa Leo</h3>
+      
+    </a><a href="https://www.theguardian.com/us-news/2026/apr/19/shreveport-louisiana-mass-shooting" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#faeee8;color:#5c2a1a">Política EE.UU.</span>
+        <span class="card-meta">🇬🇧 Guardian US · 7:13 PM ET</span>
+      </div>
+      <h3 class="card-title ">Un tiroteo masivo en Luisiana deja ocho niños muertos y otros heridos</h3>
+      
+    </a></div></section><section class="news-section">
       <div class="section-header">
         <span class="section-dot" style="background:#1a3a3a"></span>
-        <h2 class="section-title">Clima</h2>
+        <h2 class="section-title">🔬 Ciencia y Salud</h2>
       </div>
-      
-    <a href="https://www.bbc.com/news/articles/ce8jpz9rx2yo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
+      <a href="https://www.bbc.com/news/articles/ce8jpz9rx2yo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
       <div class="card-top">
-        <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Clima</span>
-        <span class="card-meta">🇬🇧 BBC Clima · 5:49 PM ET</span>
+        <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Ciencia y Salud</span>
+        <span class="card-meta">🇬🇧 BBC Science · 5:49 PM ET</span>
       </div>
       <h3 class="card-title card-title-big">Equipo de Artemisa II: 'Nos fuimos como amigos, volvimos como mejores amigos'</h3>
       <p class="card-summary">Los cuatro miembros de la tripulación dieron su primera conferencia de prensa desde que aterrizaron hace casi una semana, y enfatizaron la esperanza y la unidad.</p>
-    </a><div class="card-grid">
-    <a href="https://www.bbc.com/news/articles/c86ey5n9vx9o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
+    </a><div class="card-grid"><a href="https://www.bbc.com/news/articles/c86ey5n9vx9o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card ">
       <div class="card-top">
-        <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Clima</span>
-        <span class="card-meta">🇬🇧 BBC Clima · 7:20 PM ET</span>
+        <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Ciencia y Salud</span>
+        <span class="card-meta">🇬🇧 BBC Science · 7:20 PM ET</span>
       </div>
       <h3 class="card-title ">Por qué la energía barata podría importar más que la energía limpia en el impulso hacia el cero neto</h3>
       
-    </a>
-    <a href="https://www.bbc.com/news/articles/c75kk7p41npo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-normal">
+    </a><a href="https://www.bbc.com/news/articles/c75kk7p41npo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card ">
       <div class="card-top">
-        <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Clima</span>
-        <span class="card-meta">🇬🇧 BBC Clima · 7:14 PM ET</span>
+        <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Ciencia y Salud</span>
+        <span class="card-meta">🇬🇧 BBC Science · 7:14 PM ET</span>
       </div>
       <h3 class="card-title ">El número de mariposas está disminuyendo, pero aquí hay cinco especies que puedes ver más</h3>
       
-    </a></div>
-    </section>
+    </a><a href="https://www.theguardian.com/science/2026/apr/19/the-oscar-of-science-awarded-to-scientists-behind-genetic-treatment-that-restores-lost-vision-win" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Ciencia y Salud</span>
+        <span class="card-meta">🇬🇧 Guardian Sci. · 2:00 AM ET</span>
+      </div>
+      <h3 class="card-title ">‘Oscar de la ciencia’ otorgado al equipo detrás de la terapia génica que restaura la visión perdida</h3>
+      
+    </a></div><div class="card-grid card-grid-sm"><a href="https://www.theguardian.com/world/ng-interactive/2026/apr/19/a-year-in-life-of-london-zoo-vets-photo-special" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Ciencia y Salud</span>
+        <span class="card-meta">🇬🇧 Guardian Sci. · 1:00 AM ET</span>
+      </div>
+      <h3 class="card-title ">De leones dormidos a serpientes escupidoras: un año en la vida de los veterinarios del zoológico de Londres</h3>
+      
+    </a><a href="https://www.theguardian.com/world/2026/apr/19/artemis-astronaut-jeremy-hansen-french-canada" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Ciencia y Salud</span>
+        <span class="card-meta">🇬🇧 Guardian Sci. · 7:00 AM ET</span>
+      </div>
+      <h3 class="card-title ">Los bon mots de los astronautas canadienses ayudan a curar las heridas de la fila de la lengua francesa</h3>
+      
+    </a></div></section><section class="news-section">
+      <div class="section-header">
+        <span class="section-dot" style="background:#3a2a00"></span>
+        <h2 class="section-title">⚽ Deportes</h2>
+      </div>
+      <a href="https://www.bbc.com/sport/football/articles/c1kr1jk0wnpo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
+      <div class="card-top">
+        <span class="tag" style="background:#faf3e8;color:#3a2a00">Deportes</span>
+        <span class="card-meta">🇬🇧 BBC Sport · 3:35 PM ET</span>
+      </div>
+      <h3 class="card-title card-title-big">¿El Man City ahora es el favorito al título después de la victoria sobre el Arsenal?</h3>
+      <p class="card-summary">El gol ganador de Erling Haaland, la explosión de ruido, la reacción a tiempo completo: ¿son ahora los favoritos del Man City para ganar el título de la Premier League?</p>
+    </a><div class="card-grid"><a href="https://www.bbc.com/sport/football/articles/cvg0vpmd1xzo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#faf3e8;color:#3a2a00">Deportes</span>
+        <span class="card-meta">🇬🇧 BBC Sport · 4:27 PM ET</span>
+      </div>
+      <h3 class="card-title ">¿La falta de un ganador de partido despiadado le costará el título al Arsenal?</h3>
+      
+    </a><a href="https://www.bbc.com/sport/football/articles/c9qd94rzr01o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#faf3e8;color:#3a2a00">Deportes</span>
+        <span class="card-meta">🇬🇧 BBC Sport · 1:03 PM ET</span>
+      </div>
+      <h3 class="card-title ">Resultado de derby de ensueño para los aficionados del Liverpool pero gran verano por delante para Slot</h3>
+      
+    </a><a href="https://www.theguardian.com/football/2026/apr/19/nico-oreilly-manchester-city-arsenal-premier-league-title-race" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#faf3e8;color:#3a2a00">Deportes</span>
+        <span class="card-meta">🇬🇧 Guardian Sport · 4:11 PM ET</span>
+      </div>
+      <h3 class="card-title ">La calidad intrépida de Nico O’Reilly expone el colapso de las credenciales del título del Arsenal | Barney Ronay</h3>
+      
+    </a></div><div class="card-grid card-grid-sm"><a href="https://www.theguardian.com/sport/2026/apr/19/mets-lose-11th-game-in-a-row-baseball" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#faf3e8;color:#3a2a00">Deportes</span>
+        <span class="card-meta">🇬🇧 Guardian Sport · 5:44 PM ET</span>
+      </div>
+      <h3 class="card-title ">‘Este sentimiento apesta’: 381 millones de $ de los Mets, con la segunda nómina más alta en Grandes Ligas, pierden el undécimo partido consecutivo</h3>
+      
+    </a><a href="https://www.theguardian.com/sport/2026/apr/19/emma-raducanu-withdraws-madrid-open-tennis" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#faf3e8;color:#3a2a00">Deportes</span>
+        <span class="card-meta">🇬🇧 Guardian Sport · 10:31 AM ET</span>
+      </div>
+      <h3 class="card-title ">Raducanu se retira del Abierto de Madrid a medida que se acercan los dos meses de ausencia por enfermedad</h3>
+      
+    </a><a href="https://elpais.com/deportes/futbol/2026-04-19/la-revolucion-tranquila-de-pellegrino-matarazzo-en-la-real-sociedad-un-tipo-sin-estridencias-que-pasea-por-la-concha-y-ama-los-pintxos.html" target="_blank" rel="noopener" class="card ">
+      <div class="card-top">
+        <span class="tag" style="background:#faf3e8;color:#3a2a00">Deportes</span>
+        <span class="card-meta">🇪🇸 El País Dep. · 11:50 AM ET</span>
+      </div>
+      <h3 class="card-title ">La revolución tranquila de Pellegrino Matarazzo en la Real Sociedad: un tipo sin estridencias, que pasea por La Concha y ama los ‘pintxos’</h3>
+      
+    </a></div></section>
   </div>
 </main>
 
 <footer class="footer">
   <div class="container">
     <p><strong>Mi Briefing</strong> — Resumen de noticias para familia y amigos</p>
-    <p>Actualizado automáticamente a las 6:00 AM y 2:00 PM ET</p>
-    <p class="sources-list">Fuentes: BBC News · Reuters · DW Español · El País</p>
+    <p>Actualizado automáticamente · 6:00 AM ET y 2:00 PM ET</p>
+    <p class="sources-list">BBC Business · BBC Science · BBC Sport · BBC US · BBC World · El País · El País Dep. · Foreign Policy · Guardian Biz · Guardian Sci. · Guardian Sport · Guardian US · MarketWatch · The Guardian</p>
   </div>
 </footer>
 
 <script>
-const SCRIPTS = {"es": "Bienvenido a Mi Briefing. Edici\u00f3n vespertina del Domingo, 19 de abril de 2026. Las principales noticias de hoy son: Noticia 1: Ocho ni\u00f1os muertos en tiroteo en Luisiana, dice la polic\u00eda. Fuente: BBC. Noticia 2: Las tasas hipotecarias muestran signos de caer despu\u00e9s del pico de la guerra de Ir\u00e1n. Fuente: BBC Negocios. Noticia 3: La Casa Blanca y Anthropic mantienen una reuni\u00f3n \"productiva\" en medio de los temores sobre el modelo Mythos. Fuente: BBC Tech. Noticia 4: Equipo de Artemisa II: 'Nos fuimos como amigos, volvimos como mejores amigos'. Fuente: BBC Clima. Eso es todo por ahora. Visita Mi Briefing para leer m\u00e1s detalles.", "en": "Welcome to Mi Briefing. Edici\u00f3n vespertina, Domingo, 19 de abril de 2026. Here are today's top stories: Story 1: Eight children killed in Louisiana shooting, police say. Source: BBC. Story 2: Mortgage rates show signs of falling after Iran war peak. Source: BBC Negocios. Story 3: White House and Anthropic hold 'productive' meeting amid fears over Mythos model. Source: BBC Tech. Story 4: Artemis II crew: 'We left as friends - we came back as best friends'. Source: BBC Clima. That's all for now. Visit Mi Briefing to read more."};
+const SCRIPTS = {"es": "Bienvenido a Mi Briefing. Edici\u00f3n vespertina del Domingo, 19 de abril de 2026. En Internacional: Estados Unidos intercepta y confisca un buque de carga con bandera iran\u00ed, dice Trump. Fuente: BBC World. En Geopol\u00edtica: Ucrania tiene un plan para reconstruir mejor. Fuente: Foreign Policy. En Mercados: Los futuros de las acciones estadounidenses caen y el petr\u00f3leo sube a medida que los acontecimientos de Ir\u00e1n de este fin de semana reavivan la incertidumbre. Fuente: MarketWatch. En Pol\u00edtica EE.UU.: Ocho ni\u00f1os muertos en tiroteo en Luisiana, dice la polic\u00eda. Fuente: BBC US. En Ciencia y Salud: Equipo de Artemisa II: 'Nos fuimos como amigos, volvimos como mejores amigos'. Fuente: BBC Science. En Deportes: \u00bfEl Man City ahora es el favorito al t\u00edtulo despu\u00e9s de la victoria sobre el Arsenal?. Fuente: BBC Sport. Eso es todo. Visita Mi Briefing para leer los detalles.", "en": "Welcome to Mi Briefing. Edici\u00f3n vespertina, Domingo, 19 de abril de 2026. In Internacional: US intercepts and seizes Iranian-flagged cargo ship, Trump says. Source: BBC World. In Geopol\u00edtica: Ukraine Has a Plan to Build Back Better. Source: Foreign Policy. In Mercados: U.S. stock futures tumble, oil surges as this weekend\u2019s Iran developments rekindle uncertainty. Source: MarketWatch. In Pol\u00edtica EE.UU.: Eight children killed in Louisiana shooting, police say. Source: BBC US. In Ciencia y Salud: Artemis II crew: 'We left as friends - we came back as best friends'. Source: BBC Science. In Deportes: Are Man City now title favourites after win over Arsenal?. Source: BBC Sport. That's all for now. Visit Mi Briefing for full stories."};
 let currentLang = 'es', speaking = false, utterance = null;
 
 function setLang(lang) {
@@ -322,6 +490,21 @@ function resetPlayer() {
   document.getElementById('progress-fill').style.width = '0%';
   document.getElementById('audio-progress').classList.remove('visible');
 }
+
+// Add section IDs for nav links
+const sectionMap = {
+  'Internacional': 'internacional', 'Geopolítica': 'geopolitica',
+  'Mercados': 'mercados', 'Política EE.UU.': 'politica',
+  'Ciencia y Salud': 'ciencia', 'Deportes': 'deportes'
+};
+document.querySelectorAll('.news-section').forEach(sec => {
+  const title = sec.querySelector('.section-title');
+  if (title) {
+    const text = title.textContent.trim().replace(/^\S+\s*/, ''); // strip icon
+    const id = sectionMap[text];
+    if (id) sec.id = id;
+  }
+});
 
 if (window.speechSynthesis) {
   speechSynthesis.getVoices();
