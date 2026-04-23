@@ -2,124 +2,345 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f0e0c">
+<meta property="og:title" content="Mi Briefing — Miércoles, 22 de abril de 2026">
+<meta property="og:description" content="Tu resumen de noticias internacionales · Edición vespertina">
 <title>Mi Briefing — Miércoles, 22 de abril de 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #f7f5f0; --surface: #ffffff; --border: #e2ddd6;
-    --text: #1a1814; --muted: #6b6560; --faint: #b0aaa3;
-  }
-  body { font-family: 'Source Sans 3', sans-serif; background: var(--bg); color: var(--text); font-size: 16px; line-height: 1.6; }
-  a { color: inherit; text-decoration: none; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f5f3ef;
+  --surface: #ffffff;
+  --surface2: #f0ede8;
+  --border: #e0dbd3;
+  --text: #0f0e0c;
+  --muted: #5c5852;
+  --faint: #a09a93;
+  --radius: 12px;
+  --cat-accent: #2563eb;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
 
-  /* MASTHEAD */
-  .masthead { background: var(--surface); border-bottom: 2px solid var(--text); padding: 1.5rem 0 1rem; text-align: center; }
-  .masthead-eyebrow { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem; }
-  .masthead-logo { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 6vw, 3.5rem); font-weight: 700; letter-spacing: -1px; line-height: 1; margin-bottom: 0.5rem; }
-  .masthead-meta { display: flex; justify-content: center; align-items: center; gap: 1.5rem; font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); margin-top: 0.75rem; padding-top: 0.75rem; flex-wrap: wrap; }
-  .edition-badge { background: var(--text); color: white; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 2px; letter-spacing: 1px; text-transform: uppercase; }
+/* ── MASTHEAD ── */
+.masthead {
+  background: var(--text);
+  color: white;
+  padding: 1.25rem 1rem 1rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.masthead::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% -20%, rgba(255,255,255,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.masthead-eyebrow {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 0.4rem;
+}
+.masthead-logo {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2.2rem, 10vw, 3.2rem);
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  color: white;
+  margin-bottom: 0.75rem;
+}
+.masthead-meta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.55);
+  flex-wrap: wrap;
+}
+.edition-badge {
+  background: rgba(255,255,255,0.15);
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.masthead-sep { color: rgba(255,255,255,0.25); }
 
-  /* SECTION NAV */
-  .section-nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.5rem 0; overflow-x: auto; white-space: nowrap; }
-  .section-nav-inner { max-width: 960px; margin: 0 auto; padding: 0 1rem; display: flex; gap: 6px; }
-  .nav-pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 4px 14px; border-radius: 20px; border: 1px solid var(--border); color: var(--muted); cursor: pointer; text-decoration: none; transition: all 0.15s; }
-  .nav-pill:hover { background: var(--text); color: white; border-color: var(--text); }
+/* ── TICKER ── */
+.ticker-wrap {
+  background: #1a1814;
+  color: rgba(255,255,255,0.85);
+  font-size: 11px;
+  font-weight: 500;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.ticker-inner { display: inline-block; animation: ticker 45s linear infinite; padding-left: 100%; }
+.ticker-item { margin: 0 1.5rem; }
+.ticker-dot { color: rgba(255,255,255,0.25); margin: 0 0.5rem; }
+@keyframes ticker { from { transform:translateX(0); } to { transform:translateX(-100%); } }
 
-  /* TICKER */
-  .ticker-wrap { background: var(--text); color: white; font-size: 12px; font-weight: 500; overflow: hidden; white-space: nowrap; padding: 6px 0; }
-  .ticker-inner { display: inline-block; animation: ticker 40s linear infinite; padding-left: 100%; }
-  .ticker-inner span { margin: 0 2rem; }
-  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+/* ── SECTION NAV ── */
+.sec-nav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.sec-nav::-webkit-scrollbar { display: none; }
+.sec-nav-inner {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+  width: max-content;
+  min-width: 100%;
+}
+.nav-pill {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  white-space: nowrap;
+  transition: all 0.18s;
+  cursor: pointer;
+}
+.nav-pill:hover {
+  border-color: var(--cat-accent);
+  color: var(--cat-accent);
+  background: color-mix(in srgb, var(--cat-accent) 8%, transparent);
+}
 
-  /* AUDIO */
-  .audio-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.75rem 0; }
-  .audio-inner { max-width: 960px; margin: 0 auto; padding: 0 1rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .audio-label { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; }
-  .lang-toggle { display: flex; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
-  .lang-btn { padding: 5px 14px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: var(--muted); font-family: 'Source Sans 3', sans-serif; transition: all 0.15s; }
-  .lang-btn.active { background: var(--text); color: white; }
-  .play-btn { display: flex; align-items: center; gap: 6px; padding: 6px 16px; font-size: 13px; font-weight: 600; background: var(--text); color: white; border: none; border-radius: 4px; cursor: pointer; font-family: 'Source Sans 3', sans-serif; transition: opacity 0.15s; }
-  .play-btn:hover { opacity: 0.85; }
-  .audio-progress { flex: 1; min-width: 140px; font-size: 12px; color: var(--muted); display: none; }
-  .audio-progress.visible { display: block; }
-  .progress-bar-wrap { height: 3px; background: var(--border); border-radius: 2px; margin-top: 4px; }
-  .progress-bar-fill { height: 3px; background: var(--text); border-radius: 2px; width: 0%; transition: width 0.5s linear; }
+/* ── AUDIO BAR ── */
+.audio-bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 12px;
+}
+.audio-inner { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.audio-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.lang-toggle { display: flex; border: 1.5px solid var(--border); border-radius: 6px; overflow: hidden; }
+.lang-btn { padding: 4px 12px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: var(--muted); font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+.lang-btn.active { background: var(--text); color: white; }
+.play-btn { display: flex; align-items: center; gap: 6px; padding: 6px 16px; font-size: 13px; font-weight: 600; background: var(--text); color: white; border: none; border-radius: 8px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: opacity 0.15s; }
+.play-btn:hover { opacity: 0.85; }
+.audio-progress { flex: 1; min-width: 100px; font-size: 11px; color: var(--muted); display: none; }
+.audio-progress.visible { display: block; }
+.progress-bar-wrap { height: 3px; background: var(--border); border-radius: 2px; margin-top: 5px; }
+.progress-bar-fill { height: 3px; background: var(--text); border-radius: 2px; width: 0%; transition: width 0.5s linear; }
 
-  /* LAYOUT */
-  .container { max-width: 960px; margin: 0 auto; padding: 0 1rem; }
-  .main { padding: 2rem 0 3rem; }
+/* ── LAYOUT ── */
+.main { padding: 1.25rem 0 3rem; }
+.container { max-width: 680px; margin: 0 auto; padding: 0 12px; }
 
-  /* SECTIONS */
-  .news-section { margin-bottom: 3rem; scroll-margin-top: 80px; }
-  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1.5px solid var(--text); }
-  .section-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .section-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 500; }
+/* ── SECTION ── */
+.news-section { margin-bottom: 2.5rem; }
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+.section-label { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.section-icon { font-size: 16px; }
+.section-name {
+  font-family: 'Fraunces', serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+.section-line {
+  flex: 1;
+  height: 2px;
+  border-radius: 1px;
+  opacity: 0.25;
+}
 
-  /* CARDS */
-  .card { display: block; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 1rem 1.25rem; transition: border-color 0.15s, box-shadow 0.15s; margin-bottom: 10px; }
-  .card:hover { border-color: #999; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-  .card-featured { padding: 1.25rem 1.5rem; }
-  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin-bottom: 10px; }
-  .card-grid-sm { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin-bottom: 10px; }
-  .card-grid .card, .card-grid-sm .card { margin-bottom: 0; }
-  .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; gap: 8px; }
-  .tag { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 2px 8px; border-radius: 2px; flex-shrink: 0; white-space: nowrap; }
-  .card-meta { font-size: 11px; color: var(--faint); white-space: nowrap; }
-  .card-title { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-weight: 500; line-height: 1.35; color: var(--text); }
-  .card-title-big { font-size: 1.2rem; }
-  .card-summary { margin-top: 0.5rem; font-size: 0.875rem; color: var(--muted); line-height: 1.55; }
+/* ── HERO CARD ── */
+.hero-card {
+  display: block;
+  background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 10px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: fadeUp 0.4s ease both;
+}
+.hero-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+.hero-img {
+  width: 100%;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--surface2);
+}
+.hero-img-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-icon { font-size: 48px; opacity: 0.6; }
+.hero-body { padding: 1rem 1.1rem 1.1rem; }
+.hero-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 0.5rem; flex-wrap: wrap; }
+.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text);
+  margin-bottom: 0.4rem;
+}
+.hero-summary { font-size: 0.875rem; color: var(--muted); line-height: 1.55; }
+.hero-card:hover .hero-title { color: var(--cat-accent); }
 
-  /* FOOTER */
-  .footer { border-top: 2px solid var(--text); padding: 1.5rem 0; text-align: center; }
-  .footer p { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
-  .footer strong { color: var(--text); }
-  .sources-list { font-size: 11px; color: var(--faint); margin-top: 6px; line-height: 1.8; }
+/* ── LIST CARDS ── */
+.list-stack { display: flex; flex-direction: column; gap: 8px; }
+.list-card {
+  display: flex;
+  align-items: stretch;
+  background: var(--surface);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: fadeUp 0.4s ease both;
+}
+.list-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+.list-body { flex: 1; padding: 0.85rem 1rem; min-width: 0; }
+.list-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 0.35rem; flex-wrap: wrap; }
+.list-title {
+  font-family: 'Fraunces', serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text);
+}
+.list-card:hover .list-title { color: var(--cat-accent); }
+.list-thumb {
+  width: 90px;
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--surface2);
+}
+.list-thumb-placeholder { display: flex; align-items: center; justify-content: center; }
 
-  @media (max-width: 600px) {
-    .card-grid, .card-grid-sm { grid-template-columns: 1fr; }
-    .masthead-meta { gap: 0.5rem; }
-  }
+/* ── TAGS & META ── */
+.cat-tag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+.cat-tag-sm { font-size: 9px; padding: 2px 6px; }
+.meta-time { font-size: 11px; color: var(--faint); white-space: nowrap; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.news-section:nth-child(1) .hero-card { animation-delay: 0.05s; }
+.news-section:nth-child(2) .hero-card { animation-delay: 0.10s; }
+.news-section:nth-child(3) .hero-card { animation-delay: 0.15s; }
+.news-section:nth-child(4) .hero-card { animation-delay: 0.20s; }
+.news-section:nth-child(5) .hero-card { animation-delay: 0.25s; }
+.news-section:nth-child(6) .hero-card { animation-delay: 0.30s; }
+.list-card:nth-child(1) { animation-delay: 0.08s; }
+.list-card:nth-child(2) { animation-delay: 0.14s; }
+.list-card:nth-child(3) { animation-delay: 0.20s; }
+.list-card:nth-child(4) { animation-delay: 0.26s; }
+
+/* ── FOOTER ── */
+.footer {
+  background: var(--text);
+  color: rgba(255,255,255,0.6);
+  padding: 1.5rem 1rem;
+  text-align: center;
+}
+.footer strong { color: white; }
+.footer p { font-size: 12px; margin-bottom: 4px; }
+.sources-list { font-size: 10px; color: rgba(255,255,255,0.35); margin-top: 8px; line-height: 1.9; }
+
+@media (min-width: 480px) {
+  .hero-img { height: 240px; }
+  .hero-title { font-size: 1.35rem; }
+  .list-thumb { width: 110px; }
+}
 </style>
 </head>
 <body>
 
 <header class="masthead">
-  <div class="container">
-    <p class="masthead-eyebrow">Tu resumen de noticias · Your news briefing</p>
-    <h1 class="masthead-logo">Mi Briefing</h1>
-    <div class="masthead-meta">
-      <span>Miércoles, 22 de abril de 2026</span>
-      <span class="edition-badge">Edición vespertina</span>
-      <span>Actualizado · 4:05 PM ET</span>
-    </div>
+  <p class="masthead-eyebrow">Tu resumen · Your briefing</p>
+  <h1 class="masthead-logo">Mi Briefing</h1>
+  <div class="masthead-meta">
+    <span>Miércoles, 22 de abril de 2026</span>
+    <span class="masthead-sep">·</span>
+    <span class="edition-badge">Edición vespertina</span>
+    <span class="masthead-sep">·</span>
+    <span>Actualizado 10:34 PM ET</span>
   </div>
 </header>
 
 <div class="ticker-wrap">
   <div class="ticker-inner">
-    <span>S&amp;P 500 — en seguimiento</span><span>·</span>
-    <span>Dow Jones — en seguimiento</span><span>·</span>
-    <span>Nasdaq — en seguimiento</span><span>·</span>
-    <span>EUR/USD — en seguimiento</span><span>·</span>
-    <span>Petróleo WTI — en seguimiento</span><span>·</span>
-    <span>Bitcoin — en seguimiento</span><span>·</span>
-    <span>Oro — en seguimiento</span><span>·</span>
-    <span>Bono 10Y EE.UU. — en seguimiento</span>
+    <span class="ticker-item">S&amp;P 500 — en seguimiento</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">Dow Jones — en seguimiento</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">Nasdaq — en seguimiento</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">EUR/USD — en seguimiento</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">Petróleo WTI — en seguimiento</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">Bitcoin — en seguimiento</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">Oro — en seguimiento</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">Bono 10Y EE.UU. — en seguimiento</span>
   </div>
 </div>
 
-<nav class="section-nav">
-  <div class="section-nav-inner">
-    <a class="nav-pill" href="#internacional">🌍 Internacional</a>
-    <a class="nav-pill" href="#geopolitica">🗺️ Geopolítica</a>
-    <a class="nav-pill" href="#mercados">📈 Mercados</a>
-    <a class="nav-pill" href="#politica">🏛️ Política EE.UU.</a>
-    <a class="nav-pill" href="#ciencia">🔬 Ciencia y Salud</a>
-    <a class="nav-pill" href="#deportes">⚽ Deportes</a>
+<nav class="sec-nav">
+  <div class="sec-nav-inner">
+    <a class="nav-pill" href="#sec-internacional" style="--cat-accent:#2563eb">🌍 Internacional</a>
+    <a class="nav-pill" href="#sec-geopolítica" style="--cat-accent:#7c3aed">🗺️ Geopolítica</a>
+    <a class="nav-pill" href="#sec-mercados" style="--cat-accent:#16a34a">📈 Mercados</a>
+    <a class="nav-pill" href="#sec-política-eeuu" style="--cat-accent:#dc2626">🏛️ Política EE.UU.</a>
+    <a class="nav-pill" href="#sec-ciencia-y-salud" style="--cat-accent:#0891b2">🔬 Ciencia</a>
+    <a class="nav-pill" href="#sec-deportes" style="--cat-accent:#ea580c">⚽ Deportes</a>
   </div>
 </nav>
 
@@ -142,370 +363,444 @@
 </div>
 
 <main class="main">
-  <div class="container" id="internacional">
-    <section class="news-section">
+  <div class="container">
+    <section class="news-section" id="sec-internacional" style="--cat-accent:#2563eb">
       <div class="section-header">
-        <span class="section-dot" style="background:#1a3a5c"></span>
-        <h2 class="section-title">🌍 Internacional</h2>
+        <div class="section-label">
+          <span class="section-icon">🌍</span>
+          <h2 class="section-name">Internacional</h2>
+        </div>
+        <div class="section-line" style="background:#2563eb"></div>
       </div>
-      <a href="https://www.bbc.com/news/articles/c0q9xq7knq2o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
-        <span class="card-meta">🇬🇧 BBC World · 12:19 PM ET</span>
+      <a href="https://www.bbc.com/news/articles/c0q9xq7knq2o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="hero-card" style="--cat-accent:#2563eb">
+      <div class="hero-img" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/dcd5/live/3a8762d0-3e6b-11f1-91e9-e97dba847610.png')"></div>
+      <div class="hero-body">
+        <div class="hero-meta">
+          <span class="cat-tag" style="background:#dbeafe;color:#0a2540">Internacional</span>
+          <span class="meta-time">🇬🇧 BBC · 12:19 PM ET</span>
+        </div>
+        <h2 class="hero-title">Estados Unidos e Irán en el punto muerto del bloqueo mientras Pakistán impulsa las conversaciones</h2>
+        <p class="hero-summary">El estado de ánimo en el Estrecho de Ormuz sigue siendo inflamable a pesar de la extensión del alto el fuego de Trump.</p>
       </div>
-      <h3 class="card-title card-title-big">Estados Unidos e Irán en el punto muerto del bloqueo mientras Pakistán impulsa las conversaciones</h3>
-      <p class="card-summary">El estado de ánimo en el Estrecho de Ormuz sigue siendo inflamable a pesar de la extensión del alto el fuego de Trump.</p>
-    </a><div class="card-grid"><a href="https://www.bbc.com/news/articles/c8x7kxjgq9xo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
-        <span class="card-meta">🇬🇧 BBC World · 2:10 PM ET</span>
+    </a>
+      <div class="list-stack"><a href="https://www.bbc.com/news/articles/c8x7kxjgq9xo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#2563eb">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#dbeafe;color:#0a2540">Internacional</span>
+          <span class="meta-time">🇬🇧 BBC · 2:10 PM ET</span>
+        </div>
+        <h3 class="list-title">Un patrocinador multimillonario demanda a la empresa de criptomonedas de la familia Trump por presunta extorsión</h3>
       </div>
-      <h3 class="card-title ">Un patrocinador multimillonario demanda a la empresa de criptomonedas de la familia Trump por presunta extorsión</h3>
-      
-    </a><a href="https://www.bbc.com/news/articles/c80m4822m1no?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
-        <span class="card-meta">🇬🇧 BBC World · 1:04 PM ET</span>
+      <div class="list-thumb" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/9fb9/live/14ab1e50-3e5f-11f1-8887-e93160959470.jpg')"></div>
+    </a><a href="https://www.bbc.com/news/articles/c80m4822m1no?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#2563eb">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#dbeafe;color:#0a2540">Internacional</span>
+          <span class="meta-time">🇬🇧 BBC · 1:04 PM ET</span>
+        </div>
+        <h3 class="list-title">El Papa León critica las cárceles de Guinea Ecuatorial mientras termina su gira por África</h3>
       </div>
-      <h3 class="card-title ">El Papa León critica las cárceles de Guinea Ecuatorial mientras termina su gira por África</h3>
-      
-    </a><a href="https://www.theguardian.com/uk-news/2026/apr/22/british-woman-died-in-ghana-trying-to-recoup-money-from-scammers-inquest-told" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
-        <span class="card-meta">🇬🇧 The Guardian · 12:13 PM ET</span>
+      <div class="list-thumb" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/f9dc/live/4abcd840-3e72-11f1-b55d-0f258dce1735.jpg')"></div>
+    </a><a href="https://www.bbc.com/news/articles/cnv8l99r3yyo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#2563eb">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#dbeafe;color:#0a2540">Internacional</span>
+          <span class="meta-time">🇬🇧 BBC · 1:48 PM ET</span>
+        </div>
+        <h3 class="list-title">La UE aprueba un préstamo de € 90 mil millones para Ucrania a medida que el oleoducto se activa para poner fin al estancamiento</h3>
       </div>
-      <h3 class="card-title ">Una mujer británica murió en Ghana tratando de recuperar dinero de estafadores, dijo la investigación</h3>
-      
-    </a></div><div class="card-grid card-grid-sm"><a href="https://www.theguardian.com/global-development/2026/apr/22/climate-change-extreme-weather-heatwaves-floods-wildfires-threat-democracy-elections" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
-        <span class="card-meta">🇬🇧 The Guardian · 1:00 AM ET</span>
+      <div class="list-thumb" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/40de/live/992a3f20-3e29-11f1-b55d-0f258dce1735.jpg')"></div>
+    </a><a href="https://www.bbc.com/news/articles/c0krlxg384eo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#2563eb">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#dbeafe;color:#0a2540">Internacional</span>
+          <span class="meta-time">🇬🇧 BBC · 1:33 PM ET</span>
+        </div>
+        <h3 class="list-title">Los presuntos golpistas de Nigeria niegan los cargos de traición</h3>
       </div>
-      <h3 class="card-title ">Las olas de calor, las inundaciones y los incendios forestales representan una amenaza creciente para la democracia, según un informe</h3>
-      
-    </a><a href="https://www.theguardian.com/us-news/2026/apr/21/afghan-refugees-us-congo" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
-        <span class="card-meta">🇬🇧 The Guardian · 7:26 PM ET</span>
+      <div class="list-thumb" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/03ce/live/718adf80-3e6d-11f1-b55d-0f258dce1735.jpg')"></div>
+    </a><a href="https://www.theguardian.com/uk-news/2026/apr/22/british-woman-died-in-ghana-trying-to-recoup-money-from-scammers-inquest-told" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#2563eb">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#dbeafe;color:#0a2540">Internacional</span>
+          <span class="meta-time">🇬🇧 The Guardian · 12:13 PM ET</span>
+        </div>
+        <h3 class="list-title">Una mujer británica murió en Ghana tratando de recuperar dinero de estafadores, dijo la investigación</h3>
       </div>
-      <h3 class="card-title ">Funcionarios de Trump consideran enviar a 1.100 afganos que ayudaron a las fuerzas estadounidenses al Congo</h3>
-      
-    </a><a href="https://elpais.com/internacional/2026-04-22/la-ue-desbloquea-el-prestamo-de-90000-millones-para-ucrania-que-vetaba-hungria-y-las-nuevas-sanciones-contra-rusia.html" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f0fa;color:#1a3a5c">Internacional</span>
-        <span class="card-meta">🇪🇸 El País · 8:37 AM ET</span>
-      </div>
-      <h3 class="card-title ">La UE desbloquea el préstamo de 90.000 millones para Ucrania que vetaba Hungría y las nuevas sanciones contra Rusia</h3>
-      
-    </a></div></section><section class="news-section">
+      <div class="list-thumb list-thumb-placeholder" style="background:linear-gradient(135deg,#0a2540,#1e3a5f)"><span style="font-size:18px">🌍</span></div>
+    </a></div>
+    </section><section class="news-section" id="sec-geopolítica" style="--cat-accent:#7c3aed">
       <div class="section-header">
-        <span class="section-dot" style="background:#2d1a5c"></span>
-        <h2 class="section-title">🗺️ Geopolítica</h2>
+        <div class="section-label">
+          <span class="section-icon">🗺️</span>
+          <h2 class="section-name">Geopolítica</h2>
+        </div>
+        <div class="section-line" style="background:#7c3aed"></div>
       </div>
-      <a href="https://foreignpolicy.com/2026/04/22/un-secretary-general-race-guterres-candidate-questions-dialogues/" target="_blank" rel="noopener" class="card card-featured">
-      <div class="card-top">
-        <span class="tag" style="background:#ede8fa;color:#2d1a5c">Geopolítica</span>
-        <span class="card-meta">🇬🇧 Foreign Policy · 10:48 AM ET</span>
+      <a href="https://foreignpolicy.com/2026/04/22/karim-sadjadpour-iran-regime-future-war-gulf-energy-hormuz-cease-fire/" target="_blank" rel="noopener" class="hero-card" style="--cat-accent:#7c3aed">
+      <div class="hero-img" style="background-image:url('https://foreignpolicy.com/wp-content/uploads/2026/04/GettyImages-2271675692-1-e1776892332171.jpg')"></div>
+      <div class="hero-body">
+        <div class="hero-meta">
+          <span class="cat-tag" style="background:#ede9fe;color:#2d0a40">Geopolítica</span>
+          <span class="meta-time">🇬🇧 Foreign Policy · 5:23 PM ET</span>
+        </div>
+        <h2 class="hero-title">Cómo Irán y Estados Unidos planean sus próximos movimientos</h2>
+        <p class="hero-summary">Karim Sadjadpour sobre el alto el fuego extendido y el bloqueo continuo del Estrecho de Ormuz.</p>
       </div>
-      <h3 class="card-title card-title-big">Comienza la carrera por el próximo jefe de la ONU</h3>
-      <p class="card-summary">El proceso de selección del sucesor de António Guterres comienza con una parrilla para cuatro contendientes.</p>
-    </a><div class="card-grid"><a href="https://foreignpolicy.com/2026/04/22/china-beijing-america-united-states-competition/" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#ede8fa;color:#2d1a5c">Geopolítica</span>
-        <span class="card-meta">🇬🇧 Foreign Policy · 9:02 AM ET</span>
+    </a>
+      <div class="list-stack"><a href="https://foreignpolicy.com/2026/04/22/what-happens-if-us-iran-cease-fire-collapses-trump-hormuz/" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#7c3aed">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#ede9fe;color:#2d0a40">Geopolítica</span>
+          <span class="meta-time">🇬🇧 Foreign Policy · 5:22 PM ET</span>
+        </div>
+        <h3 class="list-title">¿Qué sucede si se derrumba el alto el fuego entre Estados Unidos e Irán?</h3>
       </div>
-      <h3 class="card-title ">¿Qué pasa si China tiene éxito?</h3>
-      
-    </a><a href="https://foreignpolicy.com/2026/04/22/aung-san-suu-kyi-myanmar-president-release-junta/" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#ede8fa;color:#2d1a5c">Geopolítica</span>
-        <span class="card-meta">🇬🇧 Foreign Policy · 1:00 AM ET</span>
+      <div class="list-thumb" style="background-image:url('https://foreignpolicy.com/wp-content/uploads/2026/04/Houthis.jpeg')"></div>
+    </a><a href="https://foreignpolicy.com/2026/04/22/ukraine-druzhba-pipeline-reopens-hungary-drops-veto-european-union-loan/" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#7c3aed">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#ede9fe;color:#2d0a40">Geopolítica</span>
+          <span class="meta-time">🇬🇧 Foreign Policy · 4:56 PM ET</span>
+        </div>
+        <h3 class="list-title">Hungría retira el veto a un préstamo masivo de la UE a Ucrania</h3>
       </div>
-      <h3 class="card-title ">Por qué la Junta liberó al presidente de Myanmar</h3>
-      
-    </a></div></section><section class="news-section">
+      <div class="list-thumb" style="background-image:url('https://foreignpolicy.com/wp-content/uploads/2026/04/HungaryEUDruzhba-GettyImages-2268763299.jpg')"></div>
+    </a><a href="https://foreignpolicy.com/2026/04/22/pakistan-us-iran-war-mediation-risks-gamble/" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#7c3aed">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#ede9fe;color:#2d0a40">Geopolítica</span>
+          <span class="meta-time">🇬🇧 Foreign Policy · 4:29 PM ET</span>
+        </div>
+        <h3 class="list-title">Pakistán apostó por la mediación</h3>
+      </div>
+      <div class="list-thumb" style="background-image:url('https://foreignpolicy.com/wp-content/uploads/2026/04/pakistan-islamabad-mediation-iran-talks-GettyImages-2271800789.jpg')"></div>
+    </a><a href="https://foreignpolicy.com/2026/04/22/un-secretary-general-race-guterres-candidate-questions-dialogues/" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#7c3aed">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#ede9fe;color:#2d0a40">Geopolítica</span>
+          <span class="meta-time">🇬🇧 Foreign Policy · 10:48 AM ET</span>
+        </div>
+        <h3 class="list-title">Comienza la carrera por el próximo jefe de la ONU</h3>
+      </div>
+      <div class="list-thumb" style="background-image:url('https://foreignpolicy.com/wp-content/uploads/2026/04/grossi-un-secretary-general-dialogues-GettyImages-2272459522.jpg')"></div>
+    </a></div>
+    </section><section class="news-section" id="sec-mercados" style="--cat-accent:#16a34a">
       <div class="section-header">
-        <span class="section-dot" style="background:#1a4a2e"></span>
-        <h2 class="section-title">📈 Mercados</h2>
+        <div class="section-label">
+          <span class="section-icon">📈</span>
+          <h2 class="section-name">Mercados</h2>
+        </div>
+        <div class="section-line" style="background:#16a34a"></div>
       </div>
-      <a href="https://www.marketwatch.com/story/ficos-stock-falls-as-fannie-and-freddie-deal-the-credit-score-company-a-new-blow-7269c2ab?mod=mw_rss_topstories" target="_blank" rel="noopener" class="card card-featured">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Mercados</span>
-        <span class="card-meta">🇬🇧 MarketWatch · 4:03 PM ET</span>
+      <a href="https://www.marketwatch.com/story/ficos-stock-falls-as-fannie-and-freddie-deal-the-credit-score-company-a-new-blow-7269c2ab?mod=mw_rss_topstories" target="_blank" rel="noopener" class="hero-card" style="--cat-accent:#16a34a">
+      <div class="hero-img" style="background-image:url('https://images.mktw.net/im-12181631')"></div>
+      <div class="hero-body">
+        <div class="hero-meta">
+          <span class="cat-tag" style="background:#dcfce7;color:#052e16">Mercados</span>
+          <span class="meta-time">🇬🇧 MarketWatch · 9:43 PM ET</span>
+        </div>
+        <h2 class="hero-title">Las acciones de FICO caen cuando Fannie y Freddie asestan un nuevo golpe a la compañía de puntaje crediticio</h2>
+        <p class="hero-summary">Las entidades respaldadas por el gobierno están adoptando un tipo de puntaje de crédito rival.</p>
       </div>
-      <h3 class="card-title card-title-big">Las acciones de FICO caen cuando Fannie y Freddie asestan un nuevo golpe a la compañía de puntaje crediticio</h3>
-      <p class="card-summary">Las entidades respaldadas por el gobierno están adoptando un tipo de puntaje de crédito rival.</p>
-    </a><div class="card-grid"><a href="https://www.marketwatch.com/story/my-20-year-old-daughter-quit-her-job-what-should-she-do-with-her-401-k-d7ab7fc9?mod=mw_rss_topstories" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Mercados</span>
-        <span class="card-meta">🇬🇧 MarketWatch · 3:47 PM ET</span>
+    </a>
+      <div class="list-stack"><a href="https://www.marketwatch.com/story/why-servicenows-stock-is-sliding-in-the-wake-of-earnings-d1f63e4e?mod=mw_rss_topstories" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#16a34a">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#dcfce7;color:#052e16">Mercados</span>
+          <span class="meta-time">🇬🇧 MarketWatch · 8:23 PM ET</span>
+        </div>
+        <h3 class="list-title">Por qué las acciones de ServiceNow están cayendo a raíz de las ganancias</h3>
       </div>
-      <h3 class="card-title ">Mi hija de 20 años renunció a su trabajo. ¿Qué debe hacer con su 401(k)?</h3>
-      
-    </a><a href="https://www.marketwatch.com/story/some-stocks-have-risen-but-others-have-flopped-i-will-soon-inherit-my-parents-1-5-million-estate-do-i-fire-the-adviser-who-charges-a-3-fee-6b5b2caa?mod=mw_rss_topstories" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Mercados</span>
-        <span class="card-meta">🇬🇧 MarketWatch · 2:51 PM ET</span>
+      <div class="list-thumb" style="background-image:url('https://images.mktw.net/im-10012347')"></div>
+    </a><a href="https://www.marketwatch.com/story/ibms-stock-falls-as-software-revenue-underwhelms-61ae8276?mod=mw_rss_topstories" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#16a34a">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#dcfce7;color:#052e16">Mercados</span>
+          <span class="meta-time">🇬🇧 MarketWatch · 8:22 PM ET</span>
+        </div>
+        <h3 class="list-title">Las acciones de IBM caen a medida que los ingresos por software decepcionan</h3>
       </div>
-      <h3 class="card-title ">"Algunas acciones han subido, pero otras han fracasado": pronto heredaré el patrimonio de 1,5 millones de $ de mis padres. ¿Debo despedir al asesor que cobra una tarifa del 3%?</h3>
-      
-    </a><a href="https://www.theguardian.com/technology/2026/apr/22/amazon-workplace-safety-record" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Mercados</span>
-        <span class="card-meta">🇬🇧 Guardian Biz · 6:00 AM ET</span>
+      <div class="list-thumb" style="background-image:url('https://images.mktw.net/im-32576044')"></div>
+    </a><a href="https://www.marketwatch.com/story/lululemon-is-getting-a-nike-veteran-as-its-new-ceo-an-analyst-says-that-could-be-a-problem-500004d1?mod=mw_rss_topstories" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#16a34a">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#dcfce7;color:#052e16">Mercados</span>
+          <span class="meta-time">🇬🇧 MarketWatch · 8:20 PM ET</span>
+        </div>
+        <h3 class="list-title">Lululemon está contratando a un veterano de Nike como su nuevo CEO. Un analista dice que podría ser un problema.</h3>
       </div>
-      <h3 class="card-title ">‘Vuelve al trabajo’: Amazon se enfrenta a un nuevo escrutinio por su historial de seguridad en el lugar de trabajo</h3>
-      
-    </a></div><div class="card-grid card-grid-sm"><a href="https://www.theguardian.com/us-news/2026/apr/22/white-house-spirit-airlines-deal" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Mercados</span>
-        <span class="card-meta">🇬🇧 Guardian Biz · 12:26 PM ET</span>
+      <div class="list-thumb" style="background-image:url('https://images.mktw.net/im-88079580')"></div>
+    </a><a href="https://www.marketwatch.com/story/csx-says-more-businesses-are-shipping-via-rail-to-avoid-surging-fuel-costs-c674dbab?mod=mw_rss_topstories" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#16a34a">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#dcfce7;color:#052e16">Mercados</span>
+          <span class="meta-time">🇬🇧 MarketWatch · 8:18 PM ET</span>
+        </div>
+        <h3 class="list-title">CSX dice que más empresas están enviando por ferrocarril para evitar un aumento en los costos del combustible</h3>
       </div>
-      <h3 class="card-title ">La Casa Blanca cerca de un acuerdo de hasta 500 millones de $ para rescatar a Spirit Airlines</h3>
-      
-    </a><a href="https://www.theguardian.com/business/2026/apr/21/kevin-warsh-federal-reserve-senate-trump" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Mercados</span>
-        <span class="card-meta">🇬🇧 Guardian Biz · 5:15 PM ET</span>
+      <div class="list-thumb" style="background-image:url('https://images.mktw.net/im-710507')"></div>
+    </a><a href="https://www.theguardian.com/technology/2026/apr/22/amazon-workplace-safety-record" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#16a34a">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#dcfce7;color:#052e16">Mercados</span>
+          <span class="meta-time">🇬🇧 Guardian Biz · 6:00 AM ET</span>
+        </div>
+        <h3 class="list-title">‘Vuelve al trabajo’: Amazon se enfrenta a un nuevo escrutinio por su historial de seguridad en el lugar de trabajo</h3>
       </div>
-      <h3 class="card-title ">La selección del presidente de la Fed de Trump dice que mantendrá la independencia, pero no dirá que el presidente perdió las elecciones de 2020</h3>
-      
-    </a><a href="https://www.bbc.com/news/articles/c75k002qkzno?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f5ee;color:#1a4a2e">Mercados</span>
-        <span class="card-meta">🇬🇧 BBC Business · 7:39 AM ET</span>
-      </div>
-      <h3 class="card-title ">Tres formas en que las últimas cifras de inflación te afectan</h3>
-      
-    </a></div></section><section class="news-section">
+      <div class="list-thumb list-thumb-placeholder" style="background:linear-gradient(135deg,#052e16,#14532d)"><span style="font-size:18px">📈</span></div>
+    </a></div>
+    </section><section class="news-section" id="sec-política-eeuu" style="--cat-accent:#dc2626">
       <div class="section-header">
-        <span class="section-dot" style="background:#5c2a1a"></span>
-        <h2 class="section-title">🏛️ Política EE.UU.</h2>
+        <div class="section-label">
+          <span class="section-icon">🏛️</span>
+          <h2 class="section-name">Política EE.UU.</h2>
+        </div>
+        <div class="section-line" style="background:#dc2626"></div>
       </div>
-      <a href="https://www.bbc.com/news/articles/cp8dg10myz0o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
-      <div class="card-top">
-        <span class="tag" style="background:#faeee8;color:#5c2a1a">Política EE.UU.</span>
-        <span class="card-meta">🇬🇧 BBC US · 3:01 PM ET</span>
+      <a href="https://www.theguardian.com/us-news/live/2026/apr/22/virginia-congressional-map-vote-redistricting-donald-trump-republicans-democrats-us-latest-news-updates" target="_blank" rel="noopener" class="hero-card" style="--cat-accent:#dc2626">
+      <div class="hero-img hero-img-placeholder" style="background:linear-gradient(135deg,#450a0a,#7f1d1d)"><span class="hero-icon">🏛️</span></div>
+      <div class="hero-body">
+        <div class="hero-meta">
+          <span class="cat-tag" style="background:#fee2e2;color:#450a0a">Política EE.UU.</span>
+          <span class="meta-time">🇬🇧 🔗 Guardian US · BBC US · 10:01 PM ET</span>
+        </div>
+        <h2 class="hero-title">El Pentágono anuncia que el secretario de la Armada de EE. UU. se irá ‘con efecto inmediato’ y será reemplazado por un diputado, como sucedió</h2>
+        <p class="hero-summary">Este blog ya está cerrado. Regístrese para recibir el correo electrónico de última hora de EE. UU. También hoy, podemos esperar que el Senado vote sobre otra resolución de poderes de guerra, para frenar la guerra de la administración Trump en Irán. Dirigida por la senadora Tammy Baldwin, demócrata de Wisconsin, ...</p>
       </div>
-      <h3 class="card-title card-title-big">Muere el demócrata de Georgia David Scott, de 80 años, tras emitir el voto final en la Cámara de Representantes</h3>
-      <p class="card-summary">La muerte del veterano legislador fue confirmada un día después de que emitiera su voto final en la Cámara de Representantes de los Estados Unidos.</p>
-    </a><div class="card-grid"><a href="https://www.bbc.com/news/articles/c80mze2381jo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#faeee8;color:#5c2a1a">Política EE.UU.</span>
-        <span class="card-meta">🇬🇧 BBC US · 2:20 PM ET</span>
+    </a>
+      <div class="list-stack"><a href="https://www.bbc.com/news/articles/ceqw35r1j5wo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#dc2626">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#fee2e2;color:#450a0a">Política EE.UU.</span>
+          <span class="meta-time">🇬🇧 BBC US · 4:34 PM ET</span>
+        </div>
+        <h3 class="list-title">Estados Unidos "no dictará los términos" de las negociaciones de libre comercio, dice el primer ministro Carney</h3>
       </div>
-      <h3 class="card-title ">Ladrón en serie que robó el bolso de Kristi Noem condenado a tres años de prisión</h3>
-      
-    </a><a href="https://www.bbc.com/news/articles/c15d888ww39o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#faeee8;color:#5c2a1a">Política EE.UU.</span>
-        <span class="card-meta">🇬🇧 BBC US · 10:22 AM ET</span>
+      <div class="list-thumb" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/f64a/live/6e6eb0c0-3e80-11f1-8e85-4f9fd1c65732.jpg')"></div>
+    </a><a href="https://www.bbc.com/news/articles/cr41yx7pxglo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#dc2626">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#fee2e2;color:#450a0a">Política EE.UU.</span>
+          <span class="meta-time">🇬🇧 BBC US · 8:39 PM ET</span>
+        </div>
+        <h3 class="list-title">Las autoridades dan a conocer la causa de la muerte de un adolescente encontrado muerto en el coche de la cantante D4vd</h3>
       </div>
-      <h3 class="card-title ">Los Ángeles se convierte en el primer distrito escolar importante de EE. UU. en limitar el tiempo de pantalla en el aula</h3>
-      
-    </a><a href="https://www.theguardian.com/us-news/live/2026/apr/22/virginia-congressional-map-vote-redistricting-donald-trump-republicans-democrats-us-latest-news-updates" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#faeee8;color:#5c2a1a">Política EE.UU.</span>
-        <span class="card-meta">🇬🇧 Guardian US · 3:43 PM ET</span>
+      <div class="list-thumb" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/1fb3/live/aa703ff0-3e8d-11f1-93dd-c79ff08bbda8.jpg')"></div>
+    </a><a href="https://www.bbc.com/news/videos/c98kz3p0x9xo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#dc2626">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#fee2e2;color:#450a0a">Política EE.UU.</span>
+          <span class="meta-time">🇬🇧 BBC US · 8:25 PM ET</span>
+        </div>
+        <h3 class="list-title">Los bomberos descongelan la instalación de hielo gigante del rapero Drake en Toronto</h3>
       </div>
-      <h3 class="card-title ">Trump impulsa la afirmación infundada de que el voto de redistribución de distritos de Virginia fue "manipulado" – en vivo</h3>
-      
-    </a></div><div class="card-grid card-grid-sm"><a href="https://www.theguardian.com/us-news/2026/apr/22/temporary-protected-status-us-economy" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#faeee8;color:#5c2a1a">Política EE.UU.</span>
-        <span class="card-meta">🇬🇧 Guardian US · 3:30 PM ET</span>
+      <div class="list-thumb" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/70ec/live/27285ae0-3ea8-11f1-bd52-e755d604ece4.jpg')"></div>
+    </a><a href="https://www.bbc.com/news/articles/cp8dg10myz0o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#dc2626">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#fee2e2;color:#450a0a">Política EE.UU.</span>
+          <span class="meta-time">🇬🇧 BBC US · 3:01 PM ET</span>
+        </div>
+        <h3 class="list-title">Muere el demócrata de Georgia David Scott, de 80 años, tras emitir el voto final en la Cámara de Representantes</h3>
       </div>
-      <h3 class="card-title ">Los titulares del estatus de protección temporal añaden $ 29 mil millones a la economía de EE. UU., según un informe</h3>
-      
-    </a><a href="https://www.theguardian.com/us-news/2026/apr/22/us-libraries-banned-books" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#faeee8;color:#5c2a1a">Política EE.UU.</span>
-        <span class="card-meta">🇬🇧 Guardian US · 3:18 PM ET</span>
+      <div class="list-thumb" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/50e1/live/aa685a10-3e74-11f1-bd52-e755d604ece4.jpg')"></div>
+    </a><a href="https://www.theguardian.com/us-news/2026/apr/23/trump-news-at-a-glance-latest-today" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#dc2626">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#fee2e2;color:#450a0a">Política EE.UU.</span>
+          <span class="meta-time">🇬🇧 Guardian US · 10:09 PM ET</span>
+        </div>
+        <h3 class="list-title">Noticias Trump de un vistazo: El Pentágono reemplaza al secretario de la marina en medio del bloqueo estadounidense en el estrecho de Ormuz</h3>
       </div>
-      <h3 class="card-title ">Estados Unidos registró un récord de 5.668 libros prohibidos en bibliotecas en 2025, dice la agencia</h3>
-      
-    </a></div></section><section class="news-section">
+      <div class="list-thumb list-thumb-placeholder" style="background:linear-gradient(135deg,#450a0a,#7f1d1d)"><span style="font-size:18px">🏛️</span></div>
+    </a></div>
+    </section><section class="news-section" id="sec-ciencia-y-salud" style="--cat-accent:#0891b2">
       <div class="section-header">
-        <span class="section-dot" style="background:#1a3a3a"></span>
-        <h2 class="section-title">🔬 Ciencia y Salud</h2>
+        <div class="section-label">
+          <span class="section-icon">🔬</span>
+          <h2 class="section-name">Ciencia y Salud</h2>
+        </div>
+        <div class="section-line" style="background:#0891b2"></div>
       </div>
-      <a href="https://www.bbc.com/news/articles/c79jg43vd8no?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Ciencia y Salud</span>
-        <span class="card-meta">🇬🇧 BBC Science · 7:53 AM ET</span>
+      <a href="https://www.bbc.com/news/articles/ckg98q1yx9vo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="hero-card" style="--cat-accent:#0891b2">
+      <div class="hero-img" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/ba3e/live/5fbcb360-3e3f-11f1-bb02-b7764f8dd2b3.jpg')"></div>
+      <div class="hero-body">
+        <div class="hero-meta">
+          <span class="cat-tag" style="background:#cffafe;color:#083344">Ciencia y Salud</span>
+          <span class="meta-time">🇬🇧 BBC Science · 7:11 PM ET</span>
+        </div>
+        <h2 class="hero-title">Los parlamentarios instan a prohibir "productos químicos para siempre" en uniformes y sartenes</h2>
+        <p class="hero-summary">Los uniformes escolares y las sartenes antiadherentes son algunos de los productos cotidianos que deberían dejar de usar productos químicos llamados PFAS, dicen los MPS.</p>
       </div>
-      <h3 class="card-title card-title-big">Facturas de electricidad objetivo en la reorganización planificada de los precios de la energía</h3>
-      <p class="card-summary">La guerra en Oriente Medio ha vuelto a llamar la atención sobre la vulnerabilidad de Gran Bretaña a los shocks de los precios de la energía.</p>
-    </a><div class="card-grid"><a href="https://www.bbc.com/news/articles/ce8jpz9rx2yo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Ciencia y Salud</span>
-        <span class="card-meta">🇬🇧 BBC Science · 5:49 PM ET</span>
+    </a>
+      <div class="list-stack"><a href="https://www.bbc.com/news/articles/c79jg43vd8no?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#0891b2">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#cffafe;color:#083344">Ciencia y Salud</span>
+          <span class="meta-time">🇬🇧 BBC Science · 7:53 AM ET</span>
+        </div>
+        <h3 class="list-title">Facturas de electricidad objetivo en la reorganización planificada de los precios de la energía</h3>
       </div>
-      <h3 class="card-title ">Equipo de Artemisa II: 'Nos fuimos como amigos, volvimos como mejores amigos'</h3>
-      
-    </a><a href="https://www.bbc.com/news/articles/c75kk7p41npo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Ciencia y Salud</span>
-        <span class="card-meta">🇬🇧 BBC Science · 7:14 PM ET</span>
+      <div class="list-thumb" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/4498/live/b0c3db60-3d5b-11f1-8606-05fe34b06e1b.jpg')"></div>
+    </a><a href="https://www.bbc.com/news/articles/ce8jpz9rx2yo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#0891b2">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#cffafe;color:#083344">Ciencia y Salud</span>
+          <span class="meta-time">🇬🇧 BBC Science · 5:49 PM ET</span>
+        </div>
+        <h3 class="list-title">Equipo de Artemisa II: 'Nos fuimos como amigos, volvimos como mejores amigos'</h3>
       </div>
-      <h3 class="card-title ">El número de mariposas está disminuyendo, pero aquí hay cinco especies que puedes ver más</h3>
-      
-    </a><a href="https://www.theguardian.com/science/2026/apr/22/pentagon-released-ufo-videos-chase-aliens" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Ciencia y Salud</span>
-        <span class="card-meta">🇬🇧 Guardian Sci. · 12:00 AM ET</span>
+      <div class="list-thumb" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/a5c8/live/87baadb0-39dd-11f1-8606-05fe34b06e1b.png')"></div>
+    </a><a href="https://www.bbc.com/news/articles/c75kk7p41npo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#0891b2">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#cffafe;color:#083344">Ciencia y Salud</span>
+          <span class="meta-time">🇬🇧 BBC Science · 7:14 PM ET</span>
+        </div>
+        <h3 class="list-title">El número de mariposas está disminuyendo, pero aquí hay cinco especies que puedes ver más</h3>
       </div>
-      <h3 class="card-title ">El Pentágono lanzó sus videos de OVNIs, así que fui a los EE. UU. a perseguir extraterrestres. Esto es lo que encontré</h3>
-      
-    </a></div><div class="card-grid card-grid-sm"><a href="https://www.theguardian.com/world/2026/apr/22/gibraltar-monkeys-eat-mud-avoid-upset-stomachs-tourists-junk-food" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Ciencia y Salud</span>
-        <span class="card-meta">🇬🇧 Guardian Sci. · 5:00 AM ET</span>
+      <div class="list-thumb" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/5f05/live/e36ddbe0-3821-11f1-87a9-4117efae0ff4.jpg')"></div>
+    </a><a href="https://www.bbc.com/news/articles/cje4zlxqkqdo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#0891b2">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#cffafe;color:#083344">Ciencia y Salud</span>
+          <span class="meta-time">🇬🇧 BBC Science · 7:19 PM ET</span>
+        </div>
+        <h3 class="list-title">El regreso de las águilas reales a los cielos ingleses recibe el respaldo del gobierno</h3>
       </div>
-      <h3 class="card-title ">Los monos de Gibraltar comen lodo "para evitar el malestar estomacal de la comida chatarra turística"</h3>
-      
-    </a><a href="https://www.theguardian.com/science/2026/apr/22/mud-rich-coastline-made-2011-japan-tsunami-far-more-destructive-study-finds" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#e8f5f5;color:#1a3a3a">Ciencia y Salud</span>
-        <span class="card-meta">🇬🇧 Guardian Sci. · 1:00 AM ET</span>
+      <div class="list-thumb" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/8a56/live/93b50d30-3420-11f1-aa50-fd39c44a0779.jpg')"></div>
+    </a><a href="https://www.theguardian.com/science/2026/apr/22/pentagon-released-ufo-videos-chase-aliens" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#0891b2">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#cffafe;color:#083344">Ciencia y Salud</span>
+          <span class="meta-time">🇬🇧 Guardian Sci. · 12:00 AM ET</span>
+        </div>
+        <h3 class="list-title">El Pentágono lanzó sus videos de OVNIs, así que fui a los EE. UU. a perseguir extraterrestres. Esto es lo que encontré</h3>
       </div>
-      <h3 class="card-title ">La costa rica en barro hizo que el tsunami de Japón de 2011 fuera mucho más destructivo, según un estudio</h3>
-      
-    </a></div></section><section class="news-section">
+      <div class="list-thumb list-thumb-placeholder" style="background:linear-gradient(135deg,#083344,#164e63)"><span style="font-size:18px">🔬</span></div>
+    </a></div>
+    </section><section class="news-section" id="sec-deportes" style="--cat-accent:#ea580c">
       <div class="section-header">
-        <span class="section-dot" style="background:#3a2a00"></span>
-        <h2 class="section-title">⚽ Deportes</h2>
+        <div class="section-label">
+          <span class="section-icon">⚽</span>
+          <h2 class="section-name">Deportes</h2>
+        </div>
+        <div class="section-line" style="background:#ea580c"></div>
       </div>
-      <a href="https://www.bbc.com/sport/football/articles/c9d4w8032vno?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card card-featured">
-      <div class="card-top">
-        <span class="tag" style="background:#faf3e8;color:#3a2a00">Deportes</span>
-        <span class="card-meta">🇬🇧 BBC Sport · 3:19 PM ET</span>
+      <a href="https://www.bbc.com/sport/football/articles/cvg4dlpvjd0o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="hero-card" style="--cat-accent:#ea580c">
+      <div class="hero-img" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/c3c8/live/36198c20-3e91-11f1-8889-13bffdb5c3f7.jpg')"></div>
+      <div class="hero-body">
+        <div class="hero-meta">
+          <span class="cat-tag" style="background:#ffedd5;color:#431407">Deportes</span>
+          <span class="meta-time">🇬🇧 BBC Sport · 6:16 PM ET</span>
+        </div>
+        <h2 class="hero-title">Advantage Man City? La 'abeja reina' Guardiola los lleva a la cima</h2>
+        <p class="hero-summary">Tomó solo cinco minutos para que los cánticos de "somos los mejores de la liga" resonaran alrededor de Turf Moor, ya que el péndulo del título continúa cambiando hacia el Manchester City.</p>
       </div>
-      <h3 class="card-title card-title-big">Rosenior despedido por el Chelsea después de tres meses a cargo</h3>
-      <p class="card-summary">El Chelsea despide al entrenador en jefe Liam Rosenior después de perder cinco partidos consecutivos de la Premier League sin anotar por primera vez desde 1912.</p>
-    </a><div class="card-grid"><a href="https://www.bbc.com/sport/football/articles/c2k3ed1glp1o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#faf3e8;color:#3a2a00">Deportes</span>
-        <span class="card-meta">🇬🇧 BBC Sport · 3:46 PM ET</span>
+    </a>
+      <div class="list-stack"><a href="https://www.bbc.com/sport/football/articles/c5yvn0l2dezo?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#ea580c">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#ffedd5;color:#431407">Deportes</span>
+          <span class="meta-time">🇬🇧 BBC Sport · 4:11 PM ET</span>
+        </div>
+        <h3 class="list-title">Respetar el balón, perder a los jugadores - dentro del reinado de Rosenior</h3>
       </div>
-      <h3 class="card-title ">Los desafortunados propietarios del Chelsea han construido un monumento al caos y el declive</h3>
-      
-    </a><a href="https://www.bbc.com/sport/football/articles/c20d98v0yz0o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#faf3e8;color:#3a2a00">Deportes</span>
-        <span class="card-meta">🇬🇧 BBC Sport · 6:44 AM ET</span>
+      <div class="list-thumb" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/e1af/live/104d7870-3e7e-11f1-8e85-4f9fd1c65732.jpg')"></div>
+    </a><a href="https://www.bbc.com/sport/football/articles/c2k3ed1glp1o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#ea580c">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#ffedd5;color:#431407">Deportes</span>
+          <span class="meta-time">🇬🇧 BBC Sport · 3:46 PM ET</span>
+        </div>
+        <h3 class="list-title">Los desafortunados propietarios del Chelsea han construido un monumento al caos y el declive</h3>
       </div>
-      <h3 class="card-title ">Los hinchas del Leicester exigen un cambio mientras Rowett insta a tomar medidas después del descenso</h3>
-      
-    </a><a href="https://www.theguardian.com/football/live/2026/apr/22/burnley-v-manchester-city-premier-league-live" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#faf3e8;color:#3a2a00">Deportes</span>
-        <span class="card-meta">🇬🇧 Guardian Sport · 4:00 PM ET</span>
+      <div class="list-thumb" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/78bc/live/37d2fdf0-3e7b-11f1-9c42-b7262844482d.jpg')"></div>
+    </a><a href="https://www.bbc.com/sport/football/articles/cx2wz72v341o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#ea580c">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#ffedd5;color:#431407">Deportes</span>
+          <span class="meta-time">🇬🇧 BBC Sport · 7:18 PM ET</span>
+        </div>
+        <h3 class="list-title">Dos menos, falta uno: ¿quién se unirá a Burnley & Wolves?</h3>
       </div>
-      <h3 class="card-title ">Burnley v Manchester City: Premier League en directo</h3>
-      
-    </a></div><div class="card-grid card-grid-sm"><a href="https://www.theguardian.com/sport/2026/apr/22/fernando-mendoza-nfl-draft-quarterback" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#faf3e8;color:#3a2a00">Deportes</span>
-        <span class="card-meta">🇬🇧 Guardian Sport · 5:00 AM ET</span>
+      <div class="list-thumb" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/523f/live/756f3500-3d01-11f1-9d5c-8ba507d7dbde.png')"></div>
+    </a><a href="https://www.bbc.com/sport/snooker/articles/c9qdzgv37e7o?at_medium=RSS&at_campaign=rss" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#ea580c">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#ffedd5;color:#431407">Deportes</span>
+          <span class="meta-time">🇬🇧 BBC Sport · 1:46 PM ET</span>
+        </div>
+        <h3 class="list-title">La apuesta de "tirar los dados" de O'Sullivan da sus frutos</h3>
       </div>
-      <h3 class="card-title ">Fernando Mendoza: lunático de LinkedIn, adorable y un símbolo del futuro de la NFL</h3>
-      
-    </a><a href="https://www.theguardian.com/football/2026/apr/22/liam-rosenior-leaves-chelsea-contract-2032" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#faf3e8;color:#3a2a00">Deportes</span>
-        <span class="card-meta">🇬🇧 Guardian Sport · 2:28 PM ET</span>
+      <div class="list-thumb" style="background-image:url('https://ichef.bbci.co.uk/ace/standard/240/cpsprodpb/7d85/live/596cf5f0-3e68-11f1-91e9-e97dba847610.png')"></div>
+    </a><a href="https://www.theguardian.com/football/2026/apr/22/pep-guardiola-targets-perfect-finish-after-manchester-city-return-to-the-top" target="_blank" rel="noopener" class="list-card" style="--cat-accent:#ea580c">
+      <div class="list-body">
+        <div class="list-meta">
+          <span class="cat-tag cat-tag-sm" style="background:#ffedd5;color:#431407">Deportes</span>
+          <span class="meta-time">🇬🇧 Guardian Sport · 6:18 PM ET</span>
+        </div>
+        <h3 class="list-title">Pep Guardiola apunta a un final perfecto después de que el Manchester City regrese a la cima</h3>
       </div>
-      <h3 class="card-title ">Liam Rosenior deja el Chelsea con tres meses y medio de contrato hasta 2032</h3>
-      
-    </a><a href="https://elpais.com/deportes/futbol/2026-04-22/barcelona-celta-en-directo-el-partido-de-laliga-en-vivo.html" target="_blank" rel="noopener" class="card ">
-      <div class="card-top">
-        <span class="tag" style="background:#faf3e8;color:#3a2a00">Deportes</span>
-        <span class="card-meta">🇪🇸 El País Dep. · 2:20 PM ET</span>
-      </div>
-      <h3 class="card-title ">Barcelona - Celta en directo | Joan García evita el primero del Celta</h3>
-      
-    </a></div></section>
+      <div class="list-thumb list-thumb-placeholder" style="background:linear-gradient(135deg,#431407,#7c2d12)"><span style="font-size:18px">⚽</span></div>
+    </a></div>
+    </section>
   </div>
 </main>
 
 <footer class="footer">
-  <div class="container">
-    <p><strong>Mi Briefing</strong> — Resumen de noticias para familia y amigos</p>
-    <p>Actualizado automáticamente · 6:00 AM ET y 2:00 PM ET</p>
-    <p class="sources-list">BBC Business · BBC Science · BBC Sport · BBC US · BBC World · El País · El País Dep. · Foreign Policy · Guardian Biz · Guardian Sci. · Guardian Sport · Guardian US · MarketWatch · The Guardian</p>
-  </div>
+  <p><strong>Mi Briefing</strong> — Resumen para familia y amigos</p>
+  <p>Actualizado automáticamente · 6:00 AM y 2:00 PM ET</p>
+  <p class="sources-list">BBC · BBC Business · BBC Science · BBC Sport · BBC US · El País · El País Dep. · Foreign Policy · Guardian Biz · Guardian Sci. · Guardian Sport · Guardian US · MarketWatch · The Guardian</p>
 </footer>
 
 <script>
-const SCRIPTS = {"es": "Bienvenido a Mi Briefing. Edici\u00f3n vespertina del Mi\u00e9rcoles, 22 de abril de 2026. En Internacional: Estados Unidos e Ir\u00e1n en el punto muerto del bloqueo mientras Pakist\u00e1n impulsa las conversaciones. Fuente: BBC World. En Geopol\u00edtica: Comienza la carrera por el pr\u00f3ximo jefe de la ONU. Fuente: Foreign Policy. En Mercados: Las acciones de FICO caen cuando Fannie y Freddie asestan un nuevo golpe a la compa\u00f1\u00eda de puntaje crediticio. Fuente: MarketWatch. En Pol\u00edtica EE.UU.: Muere el dem\u00f3crata de Georgia David Scott, de 80 a\u00f1os, tras emitir el voto final en la C\u00e1mara de Representantes. Fuente: BBC US. En Ciencia y Salud: Facturas de electricidad objetivo en la reorganizaci\u00f3n planificada de los precios de la energ\u00eda. Fuente: BBC Science. En Deportes: Rosenior despedido por el Chelsea despu\u00e9s de tres meses a cargo. Fuente: BBC Sport. Eso es todo. Visita Mi Briefing para leer los detalles.", "en": "Welcome to Mi Briefing. Edici\u00f3n vespertina, Mi\u00e9rcoles, 22 de abril de 2026. In Internacional: US and Iran in blockade standoff as Pakistan pushes for talks. Source: BBC World. In Geopol\u00edtica: The Race for the Next U.N. Chief Kicks Off. Source: Foreign Policy. In Mercados: FICO\u2019s stock falls as Fannie and Freddie deal the credit-score company a new blow. Source: MarketWatch. In Pol\u00edtica EE.UU.: Georgia Democrat David Scott, 80, dies after casting final House vote. Source: BBC US. In Ciencia y Salud: Electricity bills targeted in planned shakeup to energy pricing. Source: BBC Science. In Deportes: Rosenior sacked by Chelsea after three months in charge. Source: BBC Sport. That's all for now. Visit Mi Briefing for full stories."};
+const SCRIPTS = {"es": "Bienvenido a Mi Briefing. Edici\u00f3n vespertina, Mi\u00e9rcoles, 22 de abril de 2026. En Internacional: Estados Unidos e Ir\u00e1n en el punto muerto del bloqueo mientras Pakist\u00e1n impulsa las conversaciones. Fuente: BBC. En Geopol\u00edtica: C\u00f3mo Ir\u00e1n y Estados Unidos planean sus pr\u00f3ximos movimientos. Fuente: Foreign Policy. En Mercados: Las acciones de FICO caen cuando Fannie y Freddie asestan un nuevo golpe a la compa\u00f1\u00eda de puntaje crediticio. Fuente: MarketWatch. En Pol\u00edtica EE.UU.: El Pent\u00e1gono anuncia que el secretario de la Armada de EE. UU. se ir\u00e1 \u2018con efecto inmediato\u2019 y ser\u00e1 reemplazado por un diputado, como sucedi\u00f3. Fuente: Guardian US \u00b7 BBC US. En Ciencia y Salud: Los parlamentarios instan a prohibir \"productos qu\u00edmicos para siempre\" en uniformes y sartenes. Fuente: BBC Science. En Deportes: Advantage Man City? La 'abeja reina' Guardiola los lleva a la cima. Fuente: BBC Sport. Eso es todo. Visita Mi Briefing para leer los detalles completos.", "en": "Welcome to Mi Briefing. Edici\u00f3n vespertina, Mi\u00e9rcoles, 22 de abril de 2026. In Internacional: US and Iran in blockade standoff as Pakistan pushes for talks. Source: BBC. In Geopol\u00edtica: How Iran and the United States Are Planning Their Next Moves. Source: Foreign Policy. In Mercados: FICO\u2019s stock falls as Fannie and Freddie deal the credit-score company a new blow. Source: MarketWatch. In Pol\u00edtica EE.UU.: Pentagon announces US navy secretary is leaving \u2018effective immediately\u2019 and replaced with deputy \u2013 as it happened. Source: Guardian US \u00b7 BBC US. In Ciencia y Salud: Ban 'forever chemicals' in uniforms and frying pans, MPs urge. Source: BBC Science. In Deportes: Advantage Man City? 'Queen bee' Guardiola leads them to summit. Source: BBC Sport. That's all for now. Visit Mi Briefing for the full stories."};
 let currentLang = 'es', speaking = false, utterance = null;
-
-function setLang(lang) {
-  currentLang = lang;
-  document.getElementById('btn-es').classList.toggle('active', lang === 'es');
-  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
-  document.getElementById('play-label').textContent = lang === 'es' ? 'Reproducir' : 'Play';
+function setLang(l) {
+  currentLang = l;
+  document.getElementById('btn-es').classList.toggle('active', l==='es');
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+  document.getElementById('play-label').textContent = l==='es' ? 'Reproducir' : 'Play';
   if (speaking) stopAudio();
 }
-
 function toggleAudio() { speaking ? stopAudio() : startAudio(); }
-
 function startAudio() {
   if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
-  const text = SCRIPTS[currentLang];
-  utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang  = currentLang === 'es' ? 'es-US' : 'en-US';
-  utterance.rate  = 0.92;
+  utterance = new SpeechSynthesisUtterance(SCRIPTS[currentLang]);
+  utterance.lang  = currentLang==='es' ? 'es-US' : 'en-US';
+  utterance.rate  = 0.93;
   utterance.pitch = 1.0;
-  const voices = window.speechSynthesis.getVoices();
-  const pick = voices.find(v => currentLang === 'es'
+  const voices = speechSynthesis.getVoices();
+  const pick = voices.find(v => currentLang==='es'
     ? v.lang.startsWith('es') && /Google|Paulina|Monica|Jorge/.test(v.name)
     : v.lang.startsWith('en') && /Google|Samantha|Alex/.test(v.name)
-  ) || voices.find(v => currentLang === 'es' ? v.lang.startsWith('es') : v.lang.startsWith('en'));
+  ) || voices.find(v => currentLang==='es' ? v.lang.startsWith('es') : v.lang.startsWith('en'));
   if (pick) utterance.voice = pick;
-  const total = text.length;
-  utterance.onboundary = (e) => {
-    if (e.name === 'word') {
-      const pct = Math.min(100, Math.round((e.charIndex / total) * 100));
-      document.getElementById('progress-fill').style.width = pct + '%';
-      document.getElementById('progress-text').textContent =
-        (currentLang === 'es' ? 'Reproduciendo' : 'Playing') + '... ' + pct + '%';
+  const total = SCRIPTS[currentLang].length;
+  utterance.onboundary = e => {
+    if (e.name==='word') {
+      const pct = Math.min(100, Math.round(e.charIndex/total*100));
+      document.getElementById('progress-fill').style.width = pct+'%';
+      document.getElementById('progress-text').textContent = (currentLang==='es'?'Reproduciendo':'Playing')+'... '+pct+'%';
     }
   };
   utterance.onend = utterance.onerror = resetPlayer;
-  window.speechSynthesis.speak(utterance);
+  speechSynthesis.speak(utterance);
   speaking = true;
   document.getElementById('play-icon').textContent  = '⏹';
-  document.getElementById('play-label').textContent = currentLang === 'es' ? 'Detener' : 'Stop';
+  document.getElementById('play-label').textContent = currentLang==='es' ? 'Detener' : 'Stop';
   document.getElementById('audio-progress').classList.add('visible');
 }
-
-function stopAudio() { window.speechSynthesis.cancel(); resetPlayer(); }
-
+function stopAudio() { speechSynthesis.cancel(); resetPlayer(); }
 function resetPlayer() {
   speaking = false;
   document.getElementById('play-icon').textContent  = '▶';
-  document.getElementById('play-label').textContent = currentLang === 'es' ? 'Reproducir' : 'Play';
+  document.getElementById('play-label').textContent = currentLang==='es' ? 'Reproducir' : 'Play';
   document.getElementById('progress-fill').style.width = '0%';
   document.getElementById('audio-progress').classList.remove('visible');
 }
-
-// Add section IDs for nav links
-const sectionMap = {
-  'Internacional': 'internacional', 'Geopolítica': 'geopolitica',
-  'Mercados': 'mercados', 'Política EE.UU.': 'politica',
-  'Ciencia y Salud': 'ciencia', 'Deportes': 'deportes'
-};
-document.querySelectorAll('.news-section').forEach(sec => {
-  const title = sec.querySelector('.section-title');
-  if (title) {
-    const text = title.textContent.trim().replace(/^\S+\s*/, ''); // strip icon
-    const id = sectionMap[text];
-    if (id) sec.id = id;
-  }
-});
-
 if (window.speechSynthesis) {
   speechSynthesis.getVoices();
   speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
