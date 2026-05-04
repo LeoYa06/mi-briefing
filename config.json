@@ -1,0 +1,309 @@
+{
+  "_instrucciones": "Edita este archivo para controlar qué noticias aparecen. true = activo, false = desactivado.",
+
+  "site": {
+    "nombre": "Mi Briefing",
+    "subtitulo": "Tu resumen de noticias · Your news briefing",
+    "hora_manana": "06:00",
+    "hora_tarde": "14:00"
+  },
+
+  "secciones": {
+    "Internacional":    { "activa": true,  "max_articulos": 6, "orden": 1 },
+    "Geopolítica":      { "activa": true,  "max_articulos": 5, "orden": 2 },
+    "Ecuador":          { "activa": true,  "max_articulos": 5, "orden": 3 },
+    "Mercados":         { "activa": true,  "max_articulos": 5, "orden": 4 },
+    "Política EE.UU.":  { "activa": true,  "max_articulos": 5, "orden": 5 },
+    "Ciencia y Salud":  { "activa": true,  "max_articulos": 4, "orden": 6 },
+    "Deportes":         { "activa": true,  "max_articulos": 4, "orden": 7 }
+  },
+
+  "fuentes": [
+    {
+      "nombre": "BBC World",
+      "url": "https://feeds.bbci.co.uk/news/world/rss.xml",
+      "idioma": "en",
+      "seccion": "Internacional",
+      "activa": true,
+      "max_items": 4,
+      "prioridad": 1,
+      "notas": "Fuente principal internacional"
+    },
+    {
+      "nombre": "Reuters World",
+      "url": "https://feeds.reuters.com/reuters/worldNews",
+      "idioma": "en",
+      "seccion": "Internacional",
+      "activa": true,
+      "max_items": 4,
+      "prioridad": 1,
+      "notas": ""
+    },
+    {
+      "nombre": "The Guardian World",
+      "url": "https://www.theguardian.com/world/rss",
+      "idioma": "en",
+      "seccion": "Internacional",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 2,
+      "notas": ""
+    },
+    {
+      "nombre": "AP News",
+      "url": "https://rsshub.app/apnews/topics/apf-topnews",
+      "idioma": "en",
+      "seccion": "Internacional",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 2,
+      "notas": ""
+    },
+    {
+      "nombre": "DW Español",
+      "url": "https://rss.dw.com/rdf/rss-es-world",
+      "idioma": "es",
+      "seccion": "Internacional",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 1,
+      "notas": "En español, no necesita traducción"
+    },
+    {
+      "nombre": "El País Internacional",
+      "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/internacional/portada",
+      "idioma": "es",
+      "seccion": "Internacional",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 1,
+      "notas": ""
+    },
+    {
+      "nombre": "Foreign Policy",
+      "url": "https://foreignpolicy.com/feed/",
+      "idioma": "en",
+      "seccion": "Geopolítica",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 1,
+      "notas": "Análisis geopolítico de calidad"
+    },
+    {
+      "nombre": "CFR",
+      "url": "https://www.cfr.org/rss.xml",
+      "idioma": "en",
+      "seccion": "Geopolítica",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 1,
+      "notas": "Council on Foreign Relations"
+    },
+    {
+      "nombre": "EUobserver",
+      "url": "https://euobserver.com/rss.xml",
+      "idioma": "en",
+      "seccion": "Geopolítica",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 2,
+      "notas": "Noticias de Europa"
+    },
+    {
+      "nombre": "DW Europa",
+      "url": "https://rss.dw.com/rdf/rss-es-eu",
+      "idioma": "es",
+      "seccion": "Geopolítica",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 2,
+      "notas": ""
+    },
+    {
+      "nombre": "El Universo",
+      "url": "https://www.eluniverso.com/arc/outboundfeeds/rss/?outputType=xml",
+      "idioma": "es",
+      "seccion": "Ecuador",
+      "activa": true,
+      "max_items": 5,
+      "prioridad": 1,
+      "notas": "Diario principal de Ecuador"
+    },
+    {
+      "nombre": "El Universo Noticias",
+      "url": "https://www.eluniverso.com/arc/outboundfeeds/rss/category/noticias/?outputType=xml",
+      "idioma": "es",
+      "seccion": "Ecuador",
+      "activa": true,
+      "max_items": 4,
+      "prioridad": 1,
+      "notas": "Sección noticias de El Universo"
+    },
+    {
+      "nombre": "MarketWatch",
+      "url": "https://feeds.marketwatch.com/marketwatch/topstories/",
+      "idioma": "en",
+      "seccion": "Mercados",
+      "activa": true,
+      "max_items": 4,
+      "prioridad": 1,
+      "notas": ""
+    },
+    {
+      "nombre": "Reuters Business",
+      "url": "https://feeds.reuters.com/reuters/businessNews",
+      "idioma": "en",
+      "seccion": "Mercados",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 1,
+      "notas": ""
+    },
+    {
+      "nombre": "BBC Business",
+      "url": "https://feeds.bbci.co.uk/news/business/rss.xml",
+      "idioma": "en",
+      "seccion": "Mercados",
+      "activa": false,
+      "max_items": 3,
+      "prioridad": 2,
+      "notas": "Desactivado para reducir duplicados con Reuters"
+    },
+    {
+      "nombre": "DW Economía",
+      "url": "https://rss.dw.com/rdf/rss-es-eco",
+      "idioma": "es",
+      "seccion": "Mercados",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 2,
+      "notas": ""
+    },
+    {
+      "nombre": "Guardian Business",
+      "url": "https://www.theguardian.com/business/rss",
+      "idioma": "en",
+      "seccion": "Mercados",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 2,
+      "notas": ""
+    },
+    {
+      "nombre": "BBC US",
+      "url": "https://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml",
+      "idioma": "en",
+      "seccion": "Política EE.UU.",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 1,
+      "notas": ""
+    },
+    {
+      "nombre": "Reuters Politics",
+      "url": "https://feeds.reuters.com/Reuters/PoliticsNews",
+      "idioma": "en",
+      "seccion": "Política EE.UU.",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 1,
+      "notas": ""
+    },
+    {
+      "nombre": "Guardian US",
+      "url": "https://www.theguardian.com/us-news/rss",
+      "idioma": "en",
+      "seccion": "Política EE.UU.",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 2,
+      "notas": ""
+    },
+    {
+      "nombre": "El País US",
+      "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/usa/portada",
+      "idioma": "es",
+      "seccion": "Política EE.UU.",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 2,
+      "notas": ""
+    },
+    {
+      "nombre": "BBC Science",
+      "url": "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+      "idioma": "en",
+      "seccion": "Ciencia y Salud",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 1,
+      "notas": ""
+    },
+    {
+      "nombre": "Guardian Science",
+      "url": "https://www.theguardian.com/science/rss",
+      "idioma": "en",
+      "seccion": "Ciencia y Salud",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 2,
+      "notas": ""
+    },
+    {
+      "nombre": "Reuters Science",
+      "url": "https://feeds.reuters.com/reuters/scienceNews",
+      "idioma": "en",
+      "seccion": "Ciencia y Salud",
+      "activa": false,
+      "max_items": 3,
+      "prioridad": 3,
+      "notas": "Desactivado — muchos duplicados con BBC y Guardian"
+    },
+    {
+      "nombre": "BBC Sport",
+      "url": "https://feeds.bbci.co.uk/sport/rss.xml",
+      "idioma": "en",
+      "seccion": "Deportes",
+      "activa": true,
+      "max_items": 4,
+      "prioridad": 1,
+      "notas": ""
+    },
+    {
+      "nombre": "Guardian Sport",
+      "url": "https://www.theguardian.com/sport/rss",
+      "idioma": "en",
+      "seccion": "Deportes",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 2,
+      "notas": ""
+    },
+    {
+      "nombre": "El País Deportes",
+      "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/deportes/portada",
+      "idioma": "es",
+      "seccion": "Deportes",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 1,
+      "notas": ""
+    },
+    {
+      "nombre": "El Universo Deportes",
+      "url": "https://www.eluniverso.com/arc/outboundfeeds/rss/category/deportes/?outputType=xml",
+      "idioma": "es",
+      "seccion": "Deportes",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 2,
+      "notas": "Deportes desde Ecuador"
+    }
+  ],
+
+  "deduplicacion": {
+    "umbral_similitud": 0.42,
+    "ventana_horas": 24,
+    "max_fuentes_combinadas": 3
+  }
+}
