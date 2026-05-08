@@ -437,7 +437,7 @@ HTML = f"""<!DOCTYPE html>
 </body>
 </html>"""
 
-os.makedirs("docs/newsletter", exist_ok=True)
+oos.makedirs("docs/newsletter", exist_ok=True)
 fname = f"docs/newsletter/al-dia-{now_et.strftime('%Y-%m-%d')}.html"
 with open(fname, "w", encoding="utf-8") as f:
     f.write(HTML)
