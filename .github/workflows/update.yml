@@ -25,7 +25,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install feedparser pytz
+        run: pip install feedparser pytz-
 
       # ── Briefing web (Mi Briefing) ──────────────────────────────────────
       - name: Generate web briefing
@@ -39,7 +39,7 @@ jobs:
       - name: Commit and push
         run: |
           git config user.name  "Al Día Bot"
-          git config user.email "bot@aldia.local"
-          git add docs/index.html newsletter/
+          git config user.email "bot@aldia.local"    
+          git add docs/
           git diff --staged --quiet || git commit -m "📰 Update $(date -u '+%Y-%m-%d %H:%M UTC')"
           git push
