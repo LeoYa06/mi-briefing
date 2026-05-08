@@ -425,7 +425,7 @@ HTML = f"""<!DOCTYPE html>
     <p style="font-size:10px;color:#a09688;margin-bottom:6px;">
       BBC · Reuters · The Guardian · El País · El Universo · DW Español
     </p>
-    <a href="../index.html" style="font-size:11px;color:#2563eb;text-decoration:none;">
+    <a href="https://leoya06.github.io/mi-briefing/" style="font-size:11px;color:#2563eb;text-decoration:none;">Ver Mi Briefing completo →</a>
       Ver Mi Briefing completo →
     </a>
   </div>
