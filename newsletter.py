@@ -1,7 +1,6 @@
 """
 Al Día — newsletter_generator.py
 Genera HTML con datos de mercado en tiempo real vía Yahoo Finance (JS)
-Comparte el link en WhatsApp — los datos se cargan al abrir la página
 """
 
 import feedparser, json, re, os
@@ -193,49 +192,52 @@ def fetch(feeds, n=5):
                             "source":f["src"],"lang":f["lang"],
                             "time":tstr,"ts":ts,"prio":f["prio"]})
         except Exception as ex:
-            print(f"  ✗ {f['src']}: {ex}")
+            print(f"  x {f['src']}: {ex}")
     return dedup(raw)[:n]
 
-print("📡 Fetching feeds...")
+print("Fetching feeds...")
 ni = fetch(FEEDS["int"], 4)[:3]
 ne = fetch(FEEDS["ecu"], 5)[:3]
 nd_all = fetch(FEEDS["dep"], 10)
 mundial = [a for a in nd_all if any(k in (a['title']+a['title_es']).lower() for k in MUNDIAL_KW)]
 otros   = [a for a in nd_all if a not in mundial]
 nd = (mundial + otros)[:3]
-print(f"✓ Int:{len(ni)} Ecu:{len(ne)} Dep:{len(nd)} (Mundial:{len(mundial)})")
+print(f"OK Int:{len(ni)} Ecu:{len(ne)} Dep:{len(nd)} Mundial:{len(mundial)}")
 
 # ── Card builders ──────────────────────────────────────────────────────────
 def flag(lang): return "🇬🇧" if lang=="en" else "🇪🇸"
 
 def top_card(a, grad, tag):
-    return f"""
-      <div style="background:linear-gradient(135deg,{grad});border-radius:10px;overflow:hidden;margin-bottom:6px;">
-        <div style="padding:1rem 1.1rem .85rem;">
-          <span style="display:inline-block;background:rgba(255,255,255,.18);color:#fff;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:2px 9px;border-radius:20px;margin-bottom:7px;">{tag}</span><br>
-          <a href="{a['link']}" target="_blank" style="font-family:Georgia,serif;font-size:1rem;font-weight:700;color:#fff;text-decoration:none;line-height:1.35;">{a['title_es']}</a>
-        </div>
-        <div style="background:rgba(0,0,0,.15);padding:.5rem 1.1rem;">
-          <span style="font-size:10px;color:rgba(255,255,255,.7);">{flag(a['lang'])} {a['source']} · {a['time']}</span>
-        </div>
-      </div>"""
+    return (
+        '<div style="background:linear-gradient(135deg,' + grad + ');border-radius:10px;overflow:hidden;margin-bottom:6px;">'
+        '<div style="padding:1rem 1.1rem .85rem;">'
+        '<span style="display:inline-block;background:rgba(255,255,255,.18);color:#fff;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:2px 9px;border-radius:20px;margin-bottom:7px;">' + tag + '</span><br>'
+        '<a href="' + a['link'] + '" target="_blank" style="font-family:Georgia,serif;font-size:1rem;font-weight:700;color:#fff;text-decoration:none;line-height:1.35;">' + a['title_es'] + '</a>'
+        '</div>'
+        '<div style="background:rgba(0,0,0,.15);padding:.5rem 1.1rem;">'
+        '<span style="font-size:10px;color:rgba(255,255,255,.7);">' + flag(a['lang']) + ' ' + a['source'] + ' · ' + a['time'] + '</span>'
+        '</div>'
+        '</div>'
+    )
 
 def mini_card(a, color):
-    return f"""
-      <div style="display:flex;background:#fff;border-radius:8px;border:1px solid #e8e2d8;overflow:hidden;margin-bottom:6px;">
-        <div style="width:4px;background:{color};flex-shrink:0;"></div>
-        <div style="padding:.6rem .9rem;flex:1;">
-          <a href="{a['link']}" target="_blank" style="font-family:Georgia,serif;font-size:.9rem;font-weight:600;color:#1a1208;text-decoration:none;line-height:1.35;display:block;margin-bottom:3px;">{a['title_es']}</a>
-          <span style="font-size:10px;color:#a09688;">{flag(a['lang'])} {a['source']} · {a['time']}</span>
-        </div>
-      </div>"""
+    return (
+        '<div style="display:flex;background:#fff;border-radius:8px;border:1px solid #e8e2d8;overflow:hidden;margin-bottom:6px;">'
+        '<div style="width:4px;background:' + color + ';flex-shrink:0;"></div>'
+        '<div style="padding:.6rem .9rem;flex:1;">'
+        '<a href="' + a['link'] + '" target="_blank" style="font-family:Georgia,serif;font-size:.9rem;font-weight:600;color:#1a1208;text-decoration:none;line-height:1.35;display:block;margin-bottom:3px;">' + a['title_es'] + '</a>'
+        '<span style="font-size:10px;color:#a09688;">' + flag(a['lang']) + ' ' + a['source'] + ' · ' + a['time'] + '</span>'
+        '</div>'
+        '</div>'
+    )
 
 def sec_header(icon, label, color):
-    return f"""
-      <div style="display:flex;align-items:center;gap:8px;padding:1.1rem 0 .55rem;">
-        <span style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:{color};white-space:nowrap;">{icon} {label}</span>
-        <div style="flex:1;height:1.5px;background:{color};opacity:.25;"></div>
-      </div>"""
+    return (
+        '<div style="display:flex;align-items:center;gap:8px;padding:1.1rem 0 .55rem;">'
+        '<span style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:' + color + ';white-space:nowrap;">' + icon + ' ' + label + '</span>'
+        '<div style="flex:1;height:1.5px;background:' + color + ';opacity:.25;"></div>'
+        '</div>'
+    )
 
 # Build sections
 s_int  = sec_header("🌍","NOTICIAS INTERNACIONALES","#1e3a5f")
@@ -247,202 +249,179 @@ s_ecu += top_card(ne[0],"#065f46,#059669","Ecuador") if ne else ""
 for a in ne[1:]: s_ecu += mini_card(a,"#059669")
 
 s_dep  = sec_header("⚽","DEPORTES · CAMINO AL MUNDIAL 2026","#7c2d12")
-s_dep += top_card(nd[0],"#7c2d12,#b45309","⚽ Deportes") if nd else ""
+s_dep += top_card(nd[0],"#7c2d12,#b45309","Deportes") if nd else ""
 for a in nd[1:]: s_dep += mini_card(a,"#ea580c")
 
-s_hist = f"""
-      {sec_header("📖","HISTORIA DEL DÍA","#92400e")}
-      <div style="background:#fffbeb;border-radius:10px;border:1px solid #fde68a;padding:1.1rem 1.2rem;margin-bottom:8px;">
-        <div style="font-size:2rem;text-align:center;margin-bottom:.6rem;">{historia['emoji']}</div>
-        <div style="font-family:Georgia,serif;font-size:.98rem;font-weight:700;color:#78350f;text-align:center;margin-bottom:.6rem;">{historia['titulo']}</div>
-        <p style="font-size:.84rem;color:#92400e;line-height:1.65;margin:0 0 .7rem;">{historia['texto']}</p>
-        <div style="background:#fef3c7;border-radius:6px;padding:.55rem .9rem;border-left:3px solid #f59e0b;">
-          <span style="font-size:.8rem;color:#78350f;"><strong>💡 Dato:</strong> {historia['dato']}</span>
-        </div>
-      </div>"""
+s_hist = (
+    sec_header("📖","HISTORIA DEL DÍA","#92400e") +
+    '<div style="background:#fffbeb;border-radius:10px;border:1px solid #fde68a;padding:1.1rem 1.2rem;margin-bottom:8px;">'
+    '<div style="font-size:2rem;text-align:center;margin-bottom:.6rem;">' + historia['emoji'] + '</div>'
+    '<div style="font-family:Georgia,serif;font-size:.98rem;font-weight:700;color:#78350f;text-align:center;margin-bottom:.6rem;">' + historia['titulo'] + '</div>'
+    '<p style="font-size:.84rem;color:#92400e;line-height:1.65;margin:0 0 .7rem;">' + historia['texto'] + '</p>'
+    '<div style="background:#fef3c7;border-radius:6px;padding:.55rem .9rem;border-left:3px solid #f59e0b;">'
+    '<span style="font-size:.8rem;color:#78350f;"><strong>Dato:</strong> ' + historia['dato'] + '</span>'
+    '</div>'
+    '</div>'
+)
 
-# ── Market tickers (symbols for Yahoo Finance) ─────────────────────────────
-# Loaded via JS when user opens the page — no API key needed
+# ── Market tickers config ──────────────────────────────────────────────────
 TICKERS = [
-    {"sym":"^GSPC",  "label":"S&P 500",   "id":"sp500"},
-    {"sym":"^IXIC",  "label":"Nasdaq",     "id":"nasdaq"},
-    {"sym":"EURUSD=X","label":"EUR/USD",   "id":"eurusd"},
-    {"sym":"BTC-USD","label":"Bitcoin",    "id":"bitcoin"},
-    {"sym":"GC=F",   "label":"Oro",        "id":"gold"},
-    {"sym":"CL=F",   "label":"Petróleo",   "id":"oil"},
+    {"sym":"^GSPC",   "label":"S&P 500",  "id":"sp500"},
+    {"sym":"^IXIC",   "label":"Nasdaq",   "id":"nasdaq"},
+    {"sym":"EURUSD=X","label":"EUR/USD",  "id":"eurusd"},
+    {"sym":"BTC-USD", "label":"Bitcoin",  "id":"bitcoin"},
+    {"sym":"GC=F",    "label":"Oro",      "id":"gold"},
+    {"sym":"CL=F",    "label":"Petróleo", "id":"oil"},
 ]
 
-tickers_js_symbols = json.dumps([t["sym"] for t in TICKERS])
 tickers_html = ""
 for t in TICKERS:
-    tickers_html += f"""
-        <div style="text-align:center;padding:0 4px;">
-          <div style="font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:2px;">{t['label']}</div>
-          <div id="v-{t['id']}" style="font-size:12px;font-weight:600;color:#f5e6c8;">...</div>
-          <div id="c-{t['id']}" style="font-size:10px;color:rgba(255,255,255,.5);">—</div>
-        </div>"""
+    tickers_html += (
+        '<div style="text-align:center;padding:0 4px;">'
+        '<div style="font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:2px;">' + t['label'] + '</div>'
+        '<div id="v-' + t['id'] + '" style="font-size:12px;font-weight:600;color:#f5e6c8;">...</div>'
+        '<div id="c-' + t['id'] + '" style="font-size:10px;color:rgba(255,255,255,.4);">—</div>'
+        '</div>'
+    )
 
-market_js = f"""
-<script>
-(async function() {{
-  const symbols = {tickers_js_symbols};
-  const ids = {json.dumps([t['id'] for t in TICKERS])};
-  const labels = {json.dumps([t['label'] for t in TICKERS])};
+# Market JS — note: no f-string, written as plain string to avoid brace escaping issues
+syms_json  = json.dumps([t["sym"]  for t in TICKERS])
+ids_json   = json.dumps([t["id"]   for t in TICKERS])
 
-  // Use allorigins proxy to bypass CORS on Yahoo Finance
-  const joined = symbols.join('%2C');
-  const url = `https://query1.finance.yahoo.com/v8/finance/spark?symbols=${{joined}}&range=1d&interval=1d`;
-  const proxy = `https://corsproxy.io/?${encodeURIComponent(url)}`;
-
-  try {{
-    const res = await fetch(proxy, {signal: AbortSignal.timeout(8000)});
-    const data = await res.json();
-    const spark = data?.spark?.result || [];
-
-    spark.forEach((r, i) => {{
-      const sym = r?.symbol;
-      const idx = symbols.indexOf(sym);
+market_js = """<script>
+(async function() {
+  var symbols = """ + syms_json + """;
+  var ids     = """ + ids_json + """;
+  var joined  = symbols.map(encodeURIComponent).join('%2C');
+  var yfUrl   = 'https://query1.finance.yahoo.com/v8/finance/spark?symbols=' + joined + '&range=1d&interval=1d';
+  var proxy   = 'https://corsproxy.io/?' + encodeURIComponent(yfUrl);
+  try {
+    var res  = await fetch(proxy, {signal: AbortSignal.timeout(9000)});
+    var data = await res.json();
+    var results = (data && data.spark && data.spark.result) ? data.spark.result : [];
+    results.forEach(function(r) {
+      var sym    = r && r.symbol;
+      var idx    = symbols.indexOf(sym);
       if (idx === -1) return;
-      const id = ids[idx];
-      const closes = r?.response?.[0]?.indicators?.quote?.[0]?.close || [];
+      var id     = ids[idx];
+      var closes = (r.response && r.response[0] && r.response[0].indicators &&
+                    r.response[0].indicators.quote && r.response[0].indicators.quote[0] &&
+                    r.response[0].indicators.quote[0].close) ? r.response[0].indicators.quote[0].close : [];
       if (closes.length < 2) return;
-
-      const last  = closes[closes.length - 1];
-      const prev  = closes[closes.length - 2];
-      const chg   = ((last - prev) / prev * 100);
-      const up    = chg >= 0;
-
-      // Format value
-      let val;
+      var last = closes[closes.length - 1];
+      var prev = closes[closes.length - 2];
+      var chg  = (last - prev) / prev * 100;
+      var up   = chg >= 0;
+      var val;
       if (id === 'eurusd')       val = last.toFixed(4);
       else if (id === 'bitcoin') val = '$' + Math.round(last).toLocaleString();
       else if (id === 'gold' || id === 'oil') val = '$' + last.toFixed(1);
-      else val = last.toLocaleString(undefined, {{minimumFractionDigits:0,maximumFractionDigits:0}});
-
-      const vEl = document.getElementById('v-' + id);
-      const cEl = document.getElementById('c-' + id);
+      else val = last.toLocaleString(undefined, {minimumFractionDigits:0, maximumFractionDigits:0});
+      var vEl = document.getElementById('v-' + id);
+      var cEl = document.getElementById('c-' + id);
       if (vEl) vEl.textContent = val;
-      if (cEl) {{
+      if (cEl) {
         cEl.textContent = (up ? '▲ +' : '▼ ') + Math.abs(chg).toFixed(2) + '%';
         cEl.style.color = up ? '#4ade80' : '#f87171';
-      }}
-    }});
-  }} catch(e) {{
-    // Silently fail — markets section shows dashes
+      }
+    });
+  } catch(e) {
     console.log('Market data unavailable:', e.message);
-  }}
-}})();
+  }
+})();
 </script>"""
 
 preheader = ni[0]['title_es'] if ni else "Tu resumen de hoy está listo."
 
-# ── Full HTML ──────────────────────────────────────────────────────────────
-HTML = f"""<!DOCTYPE html>
+# ── Full HTML — no f-string to avoid brace issues ─────────────────────────
+HTML = """<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#1a1208">
-<meta property="og:title" content="Al Día — {date_full}">
-<meta property="og:description" content="Tu resumen: Internacional · Ecuador · Deportes · Historia del día">
-<title>Al Día — {date_full}</title>
+<meta property="og:title" content="Al Dia - """ + date_full + """">
+<meta property="og:description" content="Tu resumen: Internacional · Ecuador · Deportes · Historia del dia">
+<title>Al Dia - """ + date_full + """</title>
 <style>
-  * {{ box-sizing:border-box; margin:0; padding:0; }}
-  body {{ background:#f0ece4; font-family:'Helvetica Neue',Arial,sans-serif; }}
-  a {{ color:inherit; }}
-  @media(max-width:600px) {{
-    .email-wrap {{ padding: 8px !important; }}
-    .card-grid {{ grid-template-columns:1fr 1fr !important; }}
-  }}
+* { box-sizing:border-box; margin:0; padding:0; }
+body { background:#f0ece4; font-family:'Helvetica Neue',Arial,sans-serif; }
+a { color:inherit; }
 </style>
 </head>
 <body>
+<div style="display:none;max-height:0;overflow:hidden;font-size:1px;color:#f0ece4;">""" + preheader + """ · Al Dia Newsletter</div>
 
-<!-- Hidden preheader for email clients -->
-<div style="display:none;max-height:0;overflow:hidden;font-size:1px;color:#f0ece4;">
-{preheader} · Al Día Newsletter
-&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
-</div>
-
-<div class="email-wrap" style="background:#f0ece4;padding:16px;min-height:100vh;">
+<div style="background:#f0ece4;padding:16px;min-height:100vh;">
 <div style="max-width:560px;margin:0 auto;">
 
-  <!-- ── HEADER ── -->
+  <!-- HEADER -->
   <div style="background:#1a1208;border-radius:12px 12px 0 0;padding:1.5rem 1.4rem 1.2rem;text-align:center;">
-    <p style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.4rem;">
-      Tu resumen diario · {date_full}
-    </p>
-    <h1 style="font-family:Georgia,serif;font-size:2.2rem;font-weight:700;color:#f5e6c8;letter-spacing:-1px;line-height:1;margin-bottom:.3rem;">
-      Al Día
-    </h1>
-    <p style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:.75rem;">
-      Mantente informado con lo que importa hoy
-    </p>
+    <p style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.4rem;">Tu resumen diario · """ + date_full + """</p>
+    <h1 style="font-family:Georgia,serif;font-size:2.2rem;font-weight:700;color:#f5e6c8;letter-spacing:-1px;line-height:1;margin-bottom:.3rem;">Al Dia</h1>
+    <p style="font-size:11px;color:rgba(255,255,255,.5);margin-bottom:.75rem;">Mantente informado con lo que importa hoy</p>
     <span style="display:inline-block;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.75);font-size:10px;font-weight:600;padding:4px 14px;border-radius:20px;">
-      📅 {date_full} &nbsp;·&nbsp; ⏱ 3 min de lectura
+      """ + date_full + """ &nbsp;·&nbsp; 3 min de lectura
     </span>
   </div>
 
-  <!-- ── GREETING ── -->
+  <!-- GREETING -->
   <div style="background:#fdf8f0;border:1px solid #e8e2d8;border-top:none;padding:1rem 1.4rem;">
-    <p style="font-size:13.5px;color:#5c5248;line-height:1.65;">{greeting}</p>
+    <p style="font-size:13.5px;color:#5c5248;line-height:1.65;">""" + greeting + """</p>
   </div>
 
-  <!-- ── BODY ── -->
+  <!-- BODY -->
   <div style="background:#f5f1eb;border:1px solid #e8e2d8;border-top:none;padding:.6rem 1.2rem 1rem;">
-    {s_int}
-    {s_ecu}
-    {s_dep}
-    {s_hist}
+    """ + s_int + s_ecu + s_dep + s_hist + """
   </div>
 
-  <!-- ── MARKETS ── -->
+  <!-- MARKETS -->
   <div style="background:#1a1208;padding:.9rem 1rem;">
     <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4);text-align:center;margin-bottom:.6rem;">
-      📊 MERCADOS · datos en tiempo real
+      MERCADOS · datos en tiempo real
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;" class="card-grid">
-      {tickers_html}
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+      """ + tickers_html + """
     </div>
     <div style="font-size:9px;color:rgba(255,255,255,.25);text-align:center;margin-top:.5rem;">
       Fuente: Yahoo Finance · Actualizado al abrir
     </div>
   </div>
 
-  <!-- ── WHATSAPP CTA ── -->
+  <!-- CTA -->
   <div style="background:#25D366;padding:.7rem 1.2rem;text-align:center;">
     <p style="font-size:12px;font-weight:600;color:#fff;margin:0;">
-      📲 ¿Te gustó? Comparte <strong>Al Día</strong> con tu familia y amigos
+      Comparte Al Dia con tu familia y amigos
     </p>
   </div>
 
-  <!-- ── FOOTER ── -->
+  <!-- FOOTER -->
   <div style="background:#fff;border-radius:0 0 12px 12px;border:1px solid #e8e2d8;border-top:none;padding:1rem 1.4rem;text-align:center;">
     <p style="font-size:12px;color:#5c5248;margin-bottom:4px;">
-      Hecho con ☕ · <strong style="color:#1a1208;">Al Día</strong> · Actualizado {time_display}
+      Hecho con cafe · <strong style="color:#1a1208;">Al Dia</strong> · Actualizado """ + time_display + """
     </p>
     <p style="font-size:10px;color:#a09688;margin-bottom:6px;">
-      BBC · Reuters · The Guardian · El País · El Universo · DW Español
+      BBC · Reuters · The Guardian · El Pais · El Universo · DW Espanol
     </p>
-    <a href="https://leoya06.github.io/mi-briefing/" style="font-size:11px;color:#2563eb;text-decoration:none;">Ver Mi Briefing completo →</a>
-      Ver Mi Briefing completo →
+    <a href="https://leoya06.github.io/mi-briefing/" style="font-size:11px;color:#2563eb;text-decoration:none;">
+      Ver Mi Briefing completo
     </a>
   </div>
 
 </div>
 </div>
 
-{market_js}
+""" + market_js + """
 </body>
 </html>"""
 
 os.makedirs("docs/newsletter", exist_ok=True)
-fname = f"docs/newsletter/al-dia-{now_et.strftime('%Y-%m-%d')}.html"
+fname = "docs/newsletter/al-dia-" + now_et.strftime('%Y-%m-%d') + ".html"
 with open(fname, "w", encoding="utf-8") as f:
     f.write(HTML)
 with open("docs/newsletter/latest.html", "w", encoding="utf-8") as f:
     f.write(HTML)
 
-print(f"\n✅  {fname}")
-print(f"    Historia: {historia['titulo']}")
-print(f"    Traducciones: {_tc}")
+print("OK newsletter generado: " + fname)
+print("Historia: " + historia['titulo'])
+print("Traducciones: " + str(_tc))
