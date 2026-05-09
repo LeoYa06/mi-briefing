@@ -292,12 +292,11 @@ market_js = f"""
   // Use allorigins proxy to bypass CORS on Yahoo Finance
   const joined = symbols.join('%2C');
   const url = `https://query1.finance.yahoo.com/v8/finance/spark?symbols=${{joined}}&range=1d&interval=1d`;
-  const proxy = `https://api.allorigins.win/get?url=${{encodeURIComponent(url)}}`;
+  const proxy = `https://corsproxy.io/?${encodeURIComponent(url)}`;
 
   try {{
-    const res = await fetch(proxy, {{signal: AbortSignal.timeout(8000)}});
-    const outer = await res.json();
-    const data = JSON.parse(outer.contents);
+    const res = await fetch(proxy, {signal: AbortSignal.timeout(8000)});
+    const data = await res.json();
     const spark = data?.spark?.result || [];
 
     spark.forEach((r, i) => {{
