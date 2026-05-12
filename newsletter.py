@@ -118,122 +118,101 @@ HISTORIAS = [
 
 historia = HISTORIAS[day_of_year % len(HISTORIAS)]
 
-# ── Market data fetched server-side ───────────────────────────────────────
-def get_markets():
-    m = {
-        "sp500":   {"label":"S&P 500",  "val":"—","chg":"—","up":None},
-        "nasdaq":  {"label":"Nasdaq",   "val":"—","chg":"—","up":None},
-        "eurusd":  {"label":"EUR/USD",  "val":"—","chg":"—","up":None},
-        "bitcoin": {"label":"Bitcoin",  "val":"—","chg":"—","up":None},
-        "gold":    {"label":"Oro",      "val":"—","chg":"—","up":None},
-        "oil":     {"label":"Petroleo", "val":"—","chg":"—","up":None},
-    }
-    hdrs = {"User-Agent":"Mozilla/5.0 (compatible; newsletter/1.0)","Accept":"application/json"}
+# ── Finance news (replaces API market data — zero dependencies) ────────────
+FINANCE_FEEDS = [
+    {"url":"https://feeds.marketwatch.com/marketwatch/topstories/", "src":"MarketWatch","lang":"en","prio":1},
+    {"url":"https://feeds.reuters.com/reuters/businessNews",        "src":"Reuters Biz","lang":"en","prio":1},
+    {"url":"https://www.theguardian.com/business/rss",              "src":"Guardian",   "lang":"en","prio":2},
+    {"url":"https://rss.dw.com/rdf/rss-es-eco",                    "src":"DW Economia","lang":"es","prio":1},
+]
 
-    
-        # Yahoo Finance - ETFs en vez de indices directos
-    try:
-        syms = "SPY,QQQ,GLD,USO"
-        url  = "https://query1.finance.yahoo.com/v7/finance/quote?symbols=" + syms + "&fields=regularMarketPrice,regularMarketChangePercent"
-        req  = Request(url, headers=hdrs)
-        with urlopen(req, timeout=10) as r:
-            data = json.loads(r.read().decode())
-        for q in data.get("quoteResponse",{}).get("result",[]):
-            sym   = q.get("symbol","")
-            price = q.get("regularMarketPrice", 0)
-            chg   = q.get("regularMarketChangePercent", 0)
-            up    = chg >= 0
-            chg_s = ("+" if up else "") + "{:.2f}%".format(chg)
-            if sym == "SPY":
-                m["sp500"]  = {"label":"S&P 500", "val":"{:,.2f}".format(price), "chg":chg_s,"up":up}
-            elif sym == "QQQ":
-                m["nasdaq"] = {"label":"Nasdaq",  "val":"{:,.2f}".format(price), "chg":chg_s,"up":up}
-            elif sym == "GLD":
-                m["gold"]   = {"label":"Oro",     "val":"${:,.2f}".format(price), "chg":chg_s,"up":up}
-            elif sym == "USO":
-                m["oil"]    = {"label":"Petroleo","val":"${:,.2f}".format(price), "chg":chg_s,"up":up}
-        print("  Stocks OK")
-    except Exception as e:
-        print("  Stocks error: " + str(e))
-        
-        url  = "https://query1.finance.yahoo.com/v7/finance/quote?symbols=" + syms + "&fields=regularMarketPrice,regularMarketChangePercent"
-        req  = Request(url, headers=hdrs)
-        with urlopen(req, timeout=10) as r:
-            data = json.loads(r.read().decode())
-        for q in data.get("quoteResponse",{}).get("result",[]):
-            sym   = q.get("symbol","")
-            price = q.get("regularMarketPrice", 0)
-            chg   = q.get("regularMarketChangePercent", 0)
-            up    = chg >= 0
-            chg_s = ("+" if up else "") + "{:.2f}%".format(chg)
-            if sym == "^GSPC":
-                m["sp500"]  = {"label":"S&P 500", "val":"{:,.0f}".format(price), "chg":chg_s,"up":up}
-            elif sym == "^IXIC":
-                m["nasdaq"] = {"label":"Nasdaq",  "val":"{:,.0f}".format(price), "chg":chg_s,"up":up}
-            elif sym == "GC=F":
-                m["gold"]   = {"label":"Oro",     "val":"${:.1f}".format(price), "chg":chg_s,"up":up}
-            elif sym == "CL=F":
-                m["oil"]    = {"label":"Petroleo","val":"${:.1f}".format(price), "chg":chg_s,"up":up}
-        print("  Stocks OK")
-    except Exception as e:
-        print("  Stocks error: " + str(e))
+# Palabras clave para detectar el tono del mercado
+UP_WORDS   = ["rally","surge","gain","rise","jump","soar","climb","record","high",
+              "sube","gana","alza","récord","máximo","repunta","avanza"]
+DOWN_WORDS = ["fall","drop","decline","plunge","slump","tumble","sink","fear","crash",
+              "baja","cae","pérdida","mínimo","temor","retrocede","desploma"]
 
-    # EUR/USD via Frankfurter (ECB data, free)
-    try:
-        req = Request("https://api.frankfurter.app/latest?from=EUR&to=USD", headers=hdrs)
-        with urlopen(req, timeout=8) as r:
-            data = json.loads(r.read().decode())
-        rate = data["rates"]["USD"]
-        m["eurusd"] = {"label":"EUR/USD","val":"{:.4f}".format(rate),"chg":"","up":None}
-        print("  EUR/USD OK: " + str(rate))
-    except Exception as e:
-        print("  EUR/USD error: " + str(e))
+def fetch_finance_news(n=4):
+    raw = []
+    for f in FINANCE_FEEDS:
+        try:
+            feed = feedparser.parse(f["url"])
+            for e in feed.entries[:5]:
+                title = (e.get("title","") or "").strip()
+                if not title:
+                    continue
+                summ = re.sub(r'<[^<]+?>','',getattr(e,'summary','') or '').strip()
+                summ = summ[:180] + ('...' if len(summ)>180 else '')
+                title_es = translate(title) if f['lang']=='en' else title
+                pub  = getattr(e,'published_parsed',None)
+                ts, tstr = 0, "—"
+                if pub:
+                    try:
+                        dt   = datetime(*pub[:6],tzinfo=timezone.utc).astimezone(ET)
+                        ts   = dt.timestamp()
+                        tstr = dt.strftime("%-I:%M %p ET")
+                    except:
+                        pass
+                raw.append({
+                    "title":    title,
+                    "title_es": title_es,
+                    "link":     e.get("link","#"),
+                    "source":   f["src"],
+                    "lang":     f["lang"],
+                    "time":     tstr,
+                    "ts":       ts,
+                    "prio":     f["prio"],
+                })
+        except Exception as ex:
+            print("  x finance " + f['src'] + ": " + str(ex))
+    deduped = dedup(raw)[:n]
+    return deduped
 
-    # Bitcoin via CoinGecko (free, no key)
-    try:
-        url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true"
-        req = Request(url, headers=hdrs)
-        with urlopen(req, timeout=8) as r:
-            data = json.loads(r.read().decode())
-        price = data["bitcoin"]["usd"]
-        chg   = data["bitcoin"].get("usd_24h_change", 0)
-        up    = chg >= 0
-        m["bitcoin"] = {
-            "label":"Bitcoin",
-            "val":"${:,.0f}".format(price),
-            "chg": ("+" if up else "") + "{:.2f}%".format(chg),
-            "up": up
-        }
-        print("  Bitcoin OK: $" + "{:,.0f}".format(price))
-    except Exception as e:
-        print("  Bitcoin error: " + str(e))
-
-    return m
-
-print("Fetching market data...")
-markets = get_markets()
-
-def mkt_cell(key, info):
-    val_color = "#f5e6c8"
-    if info["up"] is True:
-        chg_color = "#4ade80"
-        arrow = "▲ "
-    elif info["up"] is False:
-        chg_color = "#f87171"
-        arrow = "▼ "
+def market_mood(articles):
+    up_score = 0
+    dn_score = 0
+    for a in articles:
+        txt = (a['title'] + " " + a['title_es']).lower()
+        up_score += sum(1 for w in UP_WORDS   if w in txt)
+        dn_score += sum(1 for w in DOWN_WORDS if w in txt)
+    if up_score > dn_score:
+        return ("verde", "📈", "#16a34a", "Los mercados cerraron al alza hoy.")
+    elif dn_score > up_score:
+        return ("rojo",  "📉", "#dc2626", "Los mercados tuvieron una sesion a la baja hoy.")
     else:
-        chg_color = "rgba(255,255,255,.4)"
-        arrow = ""
-    chg_txt = arrow + info["chg"] if info["chg"] else "—"
-    lines = []
-    lines.append('<div style="text-align:center;padding:0 4px;">')
-    lines.append('<div style="font-size:8px;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:2px;">' + info["label"] + '</div>')
-    lines.append('<div style="font-size:12px;font-weight:600;color:' + val_color + ';">' + info["val"] + '</div>')
-    lines.append('<div style="font-size:10px;color:' + chg_color + ';">' + chg_txt + '</div>')
-    lines.append('</div>')
-    return "\n".join(lines)
+        return ("mixto", "📊", "#d97706", "Sesion mixta en los mercados hoy.")
 
-markets_html = "\n".join(mkt_cell(k, v) for k, v in markets.items())
+def build_finance_section(articles):
+    mood_label, mood_icon, mood_color, mood_txt = market_mood(articles)
+    parts = []
+    # Header bar
+    parts.append('<div style="background:#1a1208;padding:.9rem 1.2rem .5rem;">')
+    parts.append('<div style="display:flex;align-items:center;gap:8px;margin-bottom:.5rem;">')
+    parts.append('<span style="font-size:16px;">' + mood_icon + '</span>')
+    parts.append('<span style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.6);">EL PULSO DEL MERCADO</span>')
+    parts.append('</div>')
+    # Mood sentence
+    parts.append('<p style="font-size:12px;color:' + mood_color + ';font-weight:600;margin:0 0 .75rem;">' + mood_txt + '</p>')
+    parts.append('</div>')
+    # News bullets
+    parts.append('<div style="background:#111009;padding:.5rem 1.2rem .9rem;">')
+    for a in articles:
+        flag_icon = "🇬🇧" if a['lang']=='en' else "🇪🇸"
+        parts.append('<div style="display:flex;gap:8px;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.06);">')
+        parts.append('<span style="color:#d97706;flex-shrink:0;font-size:14px;margin-top:1px;">›</span>')
+        parts.append('<div>')
+        parts.append('<a href="' + a['link'] + '" target="_blank" style="font-size:12.5px;color:#f5e6c8;text-decoration:none;line-height:1.4;display:block;margin-bottom:2px;">' + a['title_es'] + '</a>')
+        parts.append('<span style="font-size:10px;color:rgba(255,255,255,.35);">' + flag_icon + ' ' + a['source'] + ' · ' + a['time'] + '</span>')
+        parts.append('</div>')
+        parts.append('</div>')
+    parts.append('<div style="font-size:9px;color:rgba(255,255,255,.2);text-align:right;margin-top:.5rem;">Fuente: MarketWatch · Reuters · Guardian · DW</div>')
+    parts.append('</div>')
+    return "\n".join(parts)
+
+print("Fetching finance news...")
+finance_articles = fetch_finance_news(4)
+finance_html     = build_finance_section(finance_articles)
+print("  Finance news: " + str(len(finance_articles)) + " articles")
 
 # ── Translation ────────────────────────────────────────────────────────────
 _tc = 0
@@ -487,14 +466,8 @@ for path in [fname, "docs/newsletter/latest.html"]:
         w(s_hist + "\n")
         w("</div>\n")
 
-        # Markets
-        w("<div style='background:#1a1208;padding:.9rem 1rem;'>\n")
-        w("<div style='font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4);text-align:center;margin-bottom:.6rem;'>MERCADOS · " + time_display + " ET</div>\n")
-        w("<div style='display:grid;grid-template-columns:repeat(3,1fr);gap:8px;'>\n")
-        w(markets_html + "\n")
-        w("</div>\n")
-        w("<div style='font-size:9px;color:rgba(255,255,255,.25);text-align:center;margin-top:.5rem;'>Fuente: Yahoo Finance · CoinGecko · BCE</div>\n")
-        w("</div>\n")
+        # Finance news section
+        w(finance_html + "\n")
 
         # CTA
         w("<div style='background:#25D366;padding:.7rem 1.2rem;text-align:center;'>\n")
@@ -516,4 +489,4 @@ for path in [fname, "docs/newsletter/latest.html"]:
 print("OK: " + fname)
 print("Historia: " + historia['titulo'])
 print("Traducciones: " + str(_tc))
-print("Mercados: " + str({k: v['val'] for k, v in markets.items()}))
+print("Finance articles: " + str(len(finance_articles)))
