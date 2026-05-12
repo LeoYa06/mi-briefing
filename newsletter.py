@@ -130,8 +130,7 @@ def get_markets():
     }
     hdrs = {"User-Agent":"Mozilla/5.0 (compatible; newsletter/1.0)","Accept":"application/json"}
 
-    # Yahoo Finance
-    try:
+    
         # Yahoo Finance - ETFs en vez de indices directos
     try:
         syms = "SPY,QQQ,GLD,USO"
