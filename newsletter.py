@@ -132,7 +132,31 @@ def get_markets():
 
     # Yahoo Finance
     try:
-        syms = "%5EGSPC,%5EIXIC,GC%3DF,CL%3DF"
+        # Yahoo Finance - ETFs en vez de indices directos
+    try:
+        syms = "SPY,QQQ,GLD,USO"
+        url  = "https://query1.finance.yahoo.com/v7/finance/quote?symbols=" + syms + "&fields=regularMarketPrice,regularMarketChangePercent"
+        req  = Request(url, headers=hdrs)
+        with urlopen(req, timeout=10) as r:
+            data = json.loads(r.read().decode())
+        for q in data.get("quoteResponse",{}).get("result",[]):
+            sym   = q.get("symbol","")
+            price = q.get("regularMarketPrice", 0)
+            chg   = q.get("regularMarketChangePercent", 0)
+            up    = chg >= 0
+            chg_s = ("+" if up else "") + "{:.2f}%".format(chg)
+            if sym == "SPY":
+                m["sp500"]  = {"label":"S&P 500", "val":"{:,.2f}".format(price), "chg":chg_s,"up":up}
+            elif sym == "QQQ":
+                m["nasdaq"] = {"label":"Nasdaq",  "val":"{:,.2f}".format(price), "chg":chg_s,"up":up}
+            elif sym == "GLD":
+                m["gold"]   = {"label":"Oro",     "val":"${:,.2f}".format(price), "chg":chg_s,"up":up}
+            elif sym == "USO":
+                m["oil"]    = {"label":"Petroleo","val":"${:,.2f}".format(price), "chg":chg_s,"up":up}
+        print("  Stocks OK")
+    except Exception as e:
+        print("  Stocks error: " + str(e))
+        
         url  = "https://query1.finance.yahoo.com/v7/finance/quote?symbols=" + syms + "&fields=regularMarketPrice,regularMarketChangePercent"
         req  = Request(url, headers=hdrs)
         with urlopen(req, timeout=10) as r:
