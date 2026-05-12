@@ -118,102 +118,6 @@ HISTORIAS = [
 
 historia = HISTORIAS[day_of_year % len(HISTORIAS)]
 
-# ── Finance news (replaces API market data — zero dependencies) ────────────
-FINANCE_FEEDS = [
-    {"url":"https://feeds.marketwatch.com/marketwatch/topstories/", "src":"MarketWatch","lang":"en","prio":1},
-    {"url":"https://feeds.reuters.com/reuters/businessNews",        "src":"Reuters Biz","lang":"en","prio":1},
-    {"url":"https://www.theguardian.com/business/rss",              "src":"Guardian",   "lang":"en","prio":2},
-    {"url":"https://rss.dw.com/rdf/rss-es-eco",                    "src":"DW Economia","lang":"es","prio":1},
-]
-
-# Palabras clave para detectar el tono del mercado
-UP_WORDS   = ["rally","surge","gain","rise","jump","soar","climb","record","high",
-              "sube","gana","alza","récord","máximo","repunta","avanza"]
-DOWN_WORDS = ["fall","drop","decline","plunge","slump","tumble","sink","fear","crash",
-              "baja","cae","pérdida","mínimo","temor","retrocede","desploma"]
-
-def fetch_finance_news(n=4):
-    raw = []
-    for f in FINANCE_FEEDS:
-        try:
-            feed = feedparser.parse(f["url"])
-            for e in feed.entries[:5]:
-                title = (e.get("title","") or "").strip()
-                if not title:
-                    continue
-                summ = re.sub(r'<[^<]+?>','',getattr(e,'summary','') or '').strip()
-                summ = summ[:180] + ('...' if len(summ)>180 else '')
-                title_es = translate(title) if f['lang']=='en' else title
-                pub  = getattr(e,'published_parsed',None)
-                ts, tstr = 0, "—"
-                if pub:
-                    try:
-                        dt   = datetime(*pub[:6],tzinfo=timezone.utc).astimezone(ET)
-                        ts   = dt.timestamp()
-                        tstr = dt.strftime("%-I:%M %p ET")
-                    except:
-                        pass
-                raw.append({
-                    "title":    title,
-                    "title_es": title_es,
-                    "link":     e.get("link","#"),
-                    "source":   f["src"],
-                    "lang":     f["lang"],
-                    "time":     tstr,
-                    "ts":       ts,
-                    "prio":     f["prio"],
-                })
-        except Exception as ex:
-            print("  x finance " + f['src'] + ": " + str(ex))
-    deduped = dedup(raw)[:n]
-    return deduped
-
-def market_mood(articles):
-    up_score = 0
-    dn_score = 0
-    for a in articles:
-        txt = (a['title'] + " " + a['title_es']).lower()
-        up_score += sum(1 for w in UP_WORDS   if w in txt)
-        dn_score += sum(1 for w in DOWN_WORDS if w in txt)
-    if up_score > dn_score:
-        return ("verde", "📈", "#16a34a", "Los mercados cerraron al alza hoy.")
-    elif dn_score > up_score:
-        return ("rojo",  "📉", "#dc2626", "Los mercados tuvieron una sesion a la baja hoy.")
-    else:
-        return ("mixto", "📊", "#d97706", "Sesion mixta en los mercados hoy.")
-
-def build_finance_section(articles):
-    mood_label, mood_icon, mood_color, mood_txt = market_mood(articles)
-    parts = []
-    # Header bar
-    parts.append('<div style="background:#1a1208;padding:.9rem 1.2rem .5rem;">')
-    parts.append('<div style="display:flex;align-items:center;gap:8px;margin-bottom:.5rem;">')
-    parts.append('<span style="font-size:16px;">' + mood_icon + '</span>')
-    parts.append('<span style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.6);">EL PULSO DEL MERCADO</span>')
-    parts.append('</div>')
-    # Mood sentence
-    parts.append('<p style="font-size:12px;color:' + mood_color + ';font-weight:600;margin:0 0 .75rem;">' + mood_txt + '</p>')
-    parts.append('</div>')
-    # News bullets
-    parts.append('<div style="background:#111009;padding:.5rem 1.2rem .9rem;">')
-    for a in articles:
-        flag_icon = "🇬🇧" if a['lang']=='en' else "🇪🇸"
-        parts.append('<div style="display:flex;gap:8px;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.06);">')
-        parts.append('<span style="color:#d97706;flex-shrink:0;font-size:14px;margin-top:1px;">›</span>')
-        parts.append('<div>')
-        parts.append('<a href="' + a['link'] + '" target="_blank" style="font-size:12.5px;color:#f5e6c8;text-decoration:none;line-height:1.4;display:block;margin-bottom:2px;">' + a['title_es'] + '</a>')
-        parts.append('<span style="font-size:10px;color:rgba(255,255,255,.35);">' + flag_icon + ' ' + a['source'] + ' · ' + a['time'] + '</span>')
-        parts.append('</div>')
-        parts.append('</div>')
-    parts.append('<div style="font-size:9px;color:rgba(255,255,255,.2);text-align:right;margin-top:.5rem;">Fuente: MarketWatch · Reuters · Guardian · DW</div>')
-    parts.append('</div>')
-    return "\n".join(parts)
-
-print("Fetching finance news...")
-finance_articles = fetch_finance_news(4)
-finance_html     = build_finance_section(finance_articles)
-print("  Finance news: " + str(len(finance_articles)) + " articles")
-
 # ── Translation ────────────────────────────────────────────────────────────
 _tc = 0
 MAX_T = 300
@@ -282,6 +186,91 @@ def dedup(articles, thr=0.42):
             p['source'] = ' · '.join(srcs[:3])
         merged.append(p)
     return merged
+
+# ── Finance news section ──────────────────────────────────────────────────
+FINANCE_FEEDS = [
+    {"url":"https://feeds.marketwatch.com/marketwatch/topstories/", "src":"MarketWatch","lang":"en","prio":1},
+    {"url":"https://feeds.reuters.com/reuters/businessNews",        "src":"Reuters Biz","lang":"en","prio":1},
+    {"url":"https://www.theguardian.com/business/rss",              "src":"Guardian",   "lang":"en","prio":2},
+    {"url":"https://rss.dw.com/rdf/rss-es-eco",                    "src":"DW Economia","lang":"es","prio":1},
+]
+
+UP_WORDS   = ["rally","surge","gain","rise","jump","soar","climb","record","high",
+              "sube","gana","alza","record","maximo","repunta","avanza"]
+DOWN_WORDS = ["fall","drop","decline","plunge","slump","tumble","sink","fear","crash",
+              "baja","cae","perdida","minimo","temor","retrocede","desploma"]
+
+def fetch_finance_news(n=4):
+    raw = []
+    for f in FINANCE_FEEDS:
+        try:
+            feed = feedparser.parse(f["url"])
+            for e in feed.entries[:5]:
+                title = (e.get("title","") or "").strip()
+                if not title:
+                    continue
+                summ = re.sub(r'<[^<]+?>','',getattr(e,'summary','') or '').strip()
+                summ = summ[:180] + ('...' if len(summ)>180 else '')
+                title_es = translate(title) if f['lang']=='en' else title
+                pub  = getattr(e,'published_parsed',None)
+                ts, tstr = 0, "—"
+                if pub:
+                    try:
+                        dt   = datetime(*pub[:6],tzinfo=timezone.utc).astimezone(ET)
+                        ts   = dt.timestamp()
+                        tstr = dt.strftime("%-I:%M %p ET")
+                    except:
+                        pass
+                raw.append({
+                    "title":    title,
+                    "title_es": title_es,
+                    "link":     e.get("link","#"),
+                    "source":   f["src"],
+                    "lang":     f["lang"],
+                    "time":     tstr,
+                    "ts":       ts,
+                    "prio":     f["prio"],
+                })
+        except Exception as ex:
+            print("  x finance " + f['src'] + ": " + str(ex))
+    return dedup(raw)[:n]
+
+def market_mood(articles):
+    up_score, dn_score = 0, 0
+    for a in articles:
+        txt = (a['title'] + " " + a['title_es']).lower()
+        up_score += sum(1 for w in UP_WORDS   if w in txt)
+        dn_score += sum(1 for w in DOWN_WORDS if w in txt)
+    if up_score > dn_score:
+        return ("📈", "#16a34a", "Los mercados cerraron al alza hoy.")
+    elif dn_score > up_score:
+        return ("📉", "#dc2626", "Los mercados tuvieron una sesion a la baja hoy.")
+    else:
+        return ("📊", "#d97706", "Sesion mixta en los mercados hoy.")
+
+def build_finance_section(articles):
+    mood_icon, mood_color, mood_txt = market_mood(articles)
+    parts = []
+    parts.append('<div style="background:#1a1208;padding:.9rem 1.2rem .5rem;">')
+    parts.append('<div style="display:flex;align-items:center;gap:8px;margin-bottom:.5rem;">')
+    parts.append('<span style="font-size:16px;">' + mood_icon + '</span>')
+    parts.append('<span style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.6);">EL PULSO DEL MERCADO</span>')
+    parts.append('</div>')
+    parts.append('<p style="font-size:12px;color:' + mood_color + ';font-weight:600;margin:0 0 .75rem;">' + mood_txt + '</p>')
+    parts.append('</div>')
+    parts.append('<div style="background:#111009;padding:.5rem 1.2rem .9rem;">')
+    for a in articles:
+        flag_icon = "🇬🇧" if a['lang']=='en' else "🇪🇸"
+        parts.append('<div style="display:flex;gap:8px;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.06);">')
+        parts.append('<span style="color:#d97706;flex-shrink:0;font-size:14px;margin-top:1px;">›</span>')
+        parts.append('<div>')
+        parts.append('<a href="' + a['link'] + '" target="_blank" style="font-size:12.5px;color:#f5e6c8;text-decoration:none;line-height:1.4;display:block;margin-bottom:2px;">' + a['title_es'] + '</a>')
+        parts.append('<span style="font-size:10px;color:rgba(255,255,255,.35);">' + flag_icon + ' ' + a['source'] + ' · ' + a['time'] + '</span>')
+        parts.append('</div>')
+        parts.append('</div>')
+    parts.append('<div style="font-size:9px;color:rgba(255,255,255,.2);text-align:right;margin-top:.5rem;">Fuente: MarketWatch · Reuters · Guardian · DW</div>')
+    parts.append('</div>')
+    return "\n".join(parts)
 
 # ── Feeds ──────────────────────────────────────────────────────────────────
 FEEDS = {
@@ -417,6 +406,11 @@ s_int  = build_section("🌍","NOTICIAS INTERNACIONALES","#1e3a5f", ni, "#1e3a5f
 s_ecu  = build_section("🇪🇨","ECUADOR HOY","#065f46", ne, "#065f46,#059669","Ecuador")
 s_dep  = build_section("⚽","DEPORTES Y MUNDIAL 2026","#7c2d12", nd, "#7c2d12,#b45309","Deportes")
 s_hist = build_historia(historia)
+
+print("Fetching finance news...")
+finance_articles = fetch_finance_news(4)
+finance_html     = build_finance_section(finance_articles)
+print("  Finance news: " + str(len(finance_articles)) + " articles")
 
 preheader = ni[0]['title_es'] if ni else "Tu resumen de hoy esta listo."
 
