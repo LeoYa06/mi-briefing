@@ -1,12 +1,12 @@
-name: Update Al Día
+name: Update Al Dia
 
 on:
   schedule:
     # 6:00 AM ET = 11:00 UTC (EDT)
     - cron: '0 11 * * *'
     # 2:00 PM ET = 19:00 UTC (EDT)
-    - cron: '0 19 * * 1-5'   # tarde solo lunes-viernes
-  workflow_dispatch:           # disparo manual desde GitHub UI
+    - cron: '0 19 * * 1-5'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -27,19 +27,19 @@ jobs:
       - name: Install dependencies
         run: pip install feedparser pytz requests
 
-      # ── Briefing web (Mi Briefing) ──────────────────────────────────────
       - name: Generate web briefing
         run: python fetch_news.py
 
-      # ── Newsletter (Al Día) ─────────────────────────────────────────────
       - name: Generate newsletter
         run: python newsletter.py
 
-      # ── Commit & push ───────────────────────────────────────────────────
+      - name: Generate Mundial 2026
+        run: python mundial.py
+
       - name: Commit and push
         run: |
-          git config user.name  "Al Día Bot"
-          git config user.email "bot@aldia.local"    
+          git config user.name  "Al Dia Bot"
+          git config user.email "bot@aldia.local"
           git add docs/
-          git diff --staged --quiet || git commit -m "📰 Update $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git diff --staged --quiet || git commit -m "Update $(date -u '+%Y-%m-%d %H:%M UTC')"
           git push
