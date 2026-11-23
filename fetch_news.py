@@ -4,6 +4,7 @@ Lee config.json, descarga RSS, deduplica con algoritmo mejorado,
 traduce titulares al español y genera docs/index.html
 """
 
+from seleccion import seleccionar
 import feedparser
 import json
 import re
@@ -24,8 +25,6 @@ hour    = now_et.hour
 edition_es = "Edición matutina" if hour < 13 else "Edición vespertina"
 
 DEDUP   = CFG["deduplicacion"]
-UMBRAL  = DEDUP["umbral_similitud"]
-VENTANA = DEDUP["ventana_horas"]
 
 # ── Translation ────────────────────────────────────────────────────────────
 _translation_count = 0
@@ -42,7 +41,7 @@ def translate(text):
         with urlopen(req, timeout=6) as r:
             data = json.loads(r.read().decode())
         t = data.get("responseData", {}).get("translatedText", "")
-        if t and t.lower() != text.lower():
+        if str(data.get("responseStatus")) == "200" and not data.get("quotaFinished") and t and t.lower() != text.lower():
             _translation_count += 1
             return t
     except Exception as e:
@@ -50,110 +49,6 @@ def translate(text):
     return text
 
 # ── Deduplication ──────────────────────────────────────────────────────────
-STOPWORDS = {
-    'the','a','an','in','on','at','to','of','and','or','for','is','are',
-    'was','were','has','have','had','be','been','as','by','its','it',
-    'el','la','los','las','de','en','un','una','y','o','que','se','su',
-    'por','con','del','al','es','son','ha','le','lo','más','no','si',
-    'this','that','with','from','after','over','will','who','says','said',
-    'new','first','after','amid','over','says','amid'
-}
-
-def keywords(text):
-    """Extract meaningful keywords from a title."""
-    text = text.lower()
-    text = re.sub(r'[^\w\s]', ' ', text)
-    words = text.split()
-    # Keep words >3 chars and not stopwords — gives better signal
-    return set(w for w in words if len(w) > 3 and w not in STOPWORDS)
-
-def jaccard(a, b):
-    sa, sb = keywords(a), keywords(b)
-    if not sa or not sb:
-        return 0.0
-    return len(sa & sb) / len(sa | sb)
-
-def ngrams(text, n=3):
-    """Character n-grams for fuzzy matching when word overlap fails."""
-    text = re.sub(r'[^\w]', '', text.lower())
-    return set(text[i:i+n] for i in range(len(text) - n + 1))
-
-def ngram_sim(a, b, n=3):
-    ga, gb = ngrams(a, n), ngrams(b, n)
-    if not ga or not gb:
-        return 0.0
-    return len(ga & gb) / len(ga | gb)
-
-def similarity(title_a, title_b):
-    """
-    Combined similarity: Jaccard on keywords + character n-grams.
-    Jaccard alone misses when outlets phrase the same story differently
-    (e.g. 'Fed holds rates' vs 'Federal Reserve keeps interest rates unchanged').
-    N-grams catch shared proper nouns and named entities even when phrasing differs.
-    """
-    j = jaccard(title_a, title_b)
-    n = ngram_sim(title_a, title_b, n=4)
-    # Weighted blend — keyword overlap matters more
-    return j * 0.65 + n * 0.35
-
-def within_time_window(ts_a, ts_b, hours):
-    """Return True if both timestamps are within `hours` of each other."""
-    if ts_a == 0 or ts_b == 0:
-        return True  # unknown time → assume same window
-    return abs(ts_a - ts_b) < hours * 3600
-
-def deduplicate(articles):
-    """
-    Merge articles covering the same story.
-    - Uses combined keyword + n-gram similarity
-    - Only merges if published within VENTANA hours of each other
-    - Higher-priority source (lower prioridad number) wins when merging
-    - Keeps at most max_fuentes_combinadas source names
-    """
-    max_src = DEDUP["max_fuentes_combinadas"]
-    groups  = []
-    used    = set()
-
-    for i, a in enumerate(articles):
-        if i in used:
-            continue
-        group = [a]
-        for j, b in enumerate(articles):
-            if j <= i or j in used:
-                continue
-            sim = similarity(a["title"], b["title"])
-            if sim >= UMBRAL and within_time_window(a["pub_ts"], b["pub_ts"], VENTANA):
-                group.append(b)
-                used.add(j)
-        used.add(i)
-        groups.append(group)
-
-    merged = []
-    for group in groups:
-        # Sort: higher priority (lower number) first, then most recent
-        group.sort(key=lambda x: (x.get("prioridad", 9), -x.get("pub_ts", 0)))
-        primary = group[0].copy()
-        if len(group) > 1:
-            # Collect unique source names
-            seen_src = []
-            for g in group:
-                for s in g["source"].split(" · "):
-                    if s not in seen_src:
-                        seen_src.append(s)
-            primary["source"]       = " · ".join(seen_src[:max_src])
-            primary["multi_source"] = len(seen_src) > 1
-            # Prefer the richest summary among duplicates
-            if not primary.get("summary_es"):
-                for g in group[1:]:
-                    if g.get("summary_es"):
-                        primary["summary_es"] = g["summary_es"]
-                        break
-        else:
-            primary["multi_source"] = False
-        merged.append(primary)
-
-    return merged
-
 # ── Image extraction ───────────────────────────────────────────────────────
 def extract_image(entry):
     if hasattr(entry, "media_thumbnail") and entry.media_thumbnail:
@@ -247,22 +142,10 @@ for feed_meta in active_feeds:
 print(f"\n📰  Raw total: {len(raw_articles)} articles | Translations: {_translation_count}")
 
 # ── Group & deduplicate per section ───────────────────────────────────────
-by_sec_raw = defaultdict(list)
-for a in raw_articles:
-    by_sec_raw[a["seccion"]].append(a)
-
-by_sec = {}
-total_merged = 0
-print("\n🔍  Deduplication:")
-for sec, items in by_sec_raw.items():
-    deduped = deduplicate(items)
-    removed = len(items) - len(deduped)
-    total_merged += removed
-    max_art = CFG["secciones"].get(sec, {}).get("max_articulos", 6)
-    by_sec[sec] = deduped[:max_art]
-    print(f"  {sec:20s} {len(items):3d} → {len(deduped):3d}  (merged {removed:2d})")
-
-print(f"\n  Total merged: {total_merged} duplicates removed")
+if not raw_articles:
+    raise RuntimeError("Ninguna fuente devolvió noticias. Se conserva la portada anterior.")
+limites = {s: CFG["secciones"][s]["max_articulos"] for s in active_secs}
+by_sec, total_merged = seleccionar(raw_articles, limites, DEDUP)
 
 # ── Section order ──────────────────────────────────────────────────────────
 SECTIONS_ORDER = sorted(
@@ -327,13 +210,16 @@ def build_section(sec, items):
     sec_id = re.sub(r'[^a-z0-9]', '-', sec.lower())
     hero   = hero_card(items[0], sec)
     rest   = "".join(list_card(a, sec) for a in items[1:])
+    mas = (f'<details class="more"><summary>Ver {len(items)-1} titular'
+           + (' más' if len(items) == 2 else 'es más')
+           + f'</summary><div class="lstack">{rest}</div></details>') if rest else ""
     return f"""<section class="nsec" id="s-{sec_id}" style="--acc:{m['accent']}">
       <div class="sec-hd">
         <div class="sec-lbl"><span>{m['icon']}</span><h2 class="sec-name">{sec}</h2></div>
         <div class="sec-line"></div>
       </div>
       {hero}
-      {'<div class="lstack">' + rest + '</div>' if rest else ''}
+      {mas}
     </section>"""
 
 sections_html = "".join(build_section(s, by_sec.get(s, [])) for s in SECTIONS_ORDER)
@@ -400,10 +286,7 @@ a{{color:inherit;text-decoration:none;}}
 .mastmeta{{display:flex;justify-content:center;align-items:center;gap:10px;font-size:11px;color:rgba(255,255,255,.55);flex-wrap:wrap;}}
 .edbadge{{background:rgba(255,255,255,.15);color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;border:1px solid rgba(255,255,255,.2);letter-spacing:1px;text-transform:uppercase;}}
 
-.ticker{{background:#1a1814;color:rgba(255,255,255,.85);font-size:11px;font-weight:500;overflow:hidden;white-space:nowrap;padding:7px 0;}}
-.tick-in{{display:inline-block;animation:tick 45s linear infinite;padding-left:100%;}}
-.tick-in span{{margin:0 1.5rem;}}
-@keyframes tick{{from{{transform:translateX(0);}}to{{transform:translateX(-100%);}}}}
+
 
 .sec-nav{{background:var(--sur);border-bottom:1px solid var(--bdr);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}}
 .sec-nav::-webkit-scrollbar{{display:none;}}
@@ -464,6 +347,8 @@ a{{color:inherit;text-decoration:none;}}
 
 @keyframes up{{from{{opacity:0;transform:translateY(12px);}}to{{opacity:1;transform:translateY(0);}}}}
 @media(min-width:480px){{.hero-img{{height:240px;}}.hero-title{{font-size:1.35rem;}}.lthumb{{width:110px;}}}}
+.more summary{{cursor:pointer;font-weight:700;padding:.85rem .25rem;color:var(--acc);}}
+.more[open] summary{{margin-bottom:.25rem;}}
 </style>
 </head>
 <body>
@@ -481,18 +366,6 @@ a{{color:inherit;text-decoration:none;}}
     </div>
   </div>
 </header>
-
-<div class="ticker">
-  <div class="tick-in">
-    <span>S&amp;P 500 — en seguimiento</span><span>·</span>
-    <span>Dow Jones — en seguimiento</span><span>·</span>
-    <span>Nasdaq — en seguimiento</span><span>·</span>
-    <span>EUR/USD — en seguimiento</span><span>·</span>
-    <span>Petróleo WTI — en seguimiento</span><span>·</span>
-    <span>Bitcoin — en seguimiento</span><span>·</span>
-    <span>Oro — en seguimiento</span>
-  </div>
-</div>
 
 <nav class="sec-nav"><div class="nav-row">{nav_pills}</div></nav>
 

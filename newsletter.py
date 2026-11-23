@@ -1,3 +1,4 @@
+from seleccion import seleccionar
 import feedparser
 import json
 import re
@@ -133,7 +134,7 @@ def translate(text):
         with urlopen(req, timeout=6) as r:
             data = json.loads(r.read().decode())
         t = data.get("responseData",{}).get("translatedText","")
-        if t and t.lower() != text.lower():
+        if str(data.get("responseStatus")) == "200" and not data.get("quotaFinished") and t and t.lower() != text.lower():
             _tc += 1
             return t
     except:
@@ -141,52 +142,6 @@ def translate(text):
     return text
 
 # ── Deduplication ──────────────────────────────────────────────────────────
-STOP = {
-    'the','a','an','in','on','at','to','of','and','or','for','is','are',
-    'was','were','has','have','had','be','been','as','by','its','this',
-    'that','with','from','after','over','will','who','says','said','new',
-    'el','la','los','las','de','en','un','una','y','o','que','se','su',
-    'por','con','del','al','es','son','ha','le','lo','mas','no','si'
-}
-
-def kw(t):
-    t = re.sub(r'[^\w\s]', ' ', t.lower())
-    return set(w for w in t.split() if len(w) > 3 and w not in STOP)
-
-def sim(a, b):
-    sa, sb = kw(a), kw(b)
-    if not sa or not sb:
-        return 0
-    j  = len(sa & sb) / len(sa | sb)
-    ga = set(a.lower()[i:i+4] for i in range(max(0, len(a)-3)))
-    gb = set(b.lower()[i:i+4] for i in range(max(0, len(b)-3)))
-    n  = len(ga & gb) / max(len(ga | gb), 1)
-    return j * 0.65 + n * 0.35
-
-def dedup(articles, thr=0.42):
-    groups, used = [], set()
-    for i, a in enumerate(articles):
-        if i in used:
-            continue
-        g = [a]
-        for j, b in enumerate(articles):
-            if j <= i or j in used:
-                continue
-            if sim(a['title'], b['title']) >= thr:
-                g.append(b)
-                used.add(j)
-        used.add(i)
-        groups.append(g)
-    merged = []
-    for g in groups:
-        g.sort(key=lambda x: (-x.get('prio', 5), -x.get('ts', 0)))
-        p = g[0].copy()
-        if len(g) > 1:
-            srcs = list(dict.fromkeys(s for x in g for s in x['source'].split(' · ')))
-            p['source'] = ' · '.join(srcs[:3])
-        merged.append(p)
-    return merged
-
 # ── Finance news section ──────────────────────────────────────────────────
 FINANCE_FEEDS = [
     {"url":"https://feeds.marketwatch.com/marketwatch/topstories/", "src":"MarketWatch","lang":"en","prio":1},
@@ -200,7 +155,7 @@ UP_WORDS   = ["rally","surge","gain","rise","jump","soar","climb","record","high
 DOWN_WORDS = ["fall","drop","decline","plunge","slump","tumble","sink","fear","crash",
               "baja","cae","perdida","minimo","temor","retrocede","desploma"]
 
-def fetch_finance_news(n=4):
+def fetch_finance_news():
     raw = []
     for f in FINANCE_FEEDS:
         try:
@@ -233,7 +188,7 @@ def fetch_finance_news(n=4):
                 })
         except Exception as ex:
             print("  x finance " + f['src'] + ": " + str(ex))
-    return dedup(raw)[:n]
+    return raw
 
 def market_mood(articles):
     up_score, dn_score = 0, 0
@@ -297,10 +252,7 @@ FEEDS = {
     ],
 }
 
-MUNDIAL_KW = ['mundial','world cup','fifa','2026','copa del mundo',
-              'seleccion','qualifier','clasificatori','wc2026']
-
-def fetch(feeds, n=5):
+def fetch(feeds):
     raw = []
     for f in feeds:
         try:
@@ -334,17 +286,22 @@ def fetch(feeds, n=5):
                 })
         except Exception as ex:
             print("  x " + f['src'] + ": " + str(ex))
-    return dedup(raw)[:n]
+    return raw
 
 print("Fetching news...")
-ni     = fetch(FEEDS["int"], 4)[:3]
-ne     = fetch(FEEDS["ecu"], 5)[:3]
-nd_all = fetch(FEEDS["dep"], 10)
-mundial = [a for a in nd_all if any(k in (a['title']+a['title_es']).lower() for k in MUNDIAL_KW)]
-otros   = [a for a in nd_all if a not in mundial]
-nd      = (mundial + otros)[:3]
-print("OK Int:" + str(len(ni)) + " Ecu:" + str(len(ne)) + " Dep:" + str(len(nd)))
-
+candidatos = []
+for sec, articulos in [
+    ("int", fetch(FEEDS["int"])), ("ecu", fetch(FEEDS["ecu"])),
+    ("dep", fetch(FEEDS["dep"])), ("fin", fetch_finance_news()),
+]:
+    for a in articulos:
+        candidatos.append(dict(a, seccion=sec, prioridad=a["prio"], pub_ts=a["ts"]))
+if not candidatos:
+    raise RuntimeError("Ninguna fuente devolvió noticias. Se conserva el boletín anterior.")
+with open("config.json", encoding="utf-8") as config:
+    reglas = json.load(config)["deduplicacion"]
+seleccion, _ = seleccionar(candidatos, {"int": 3, "ecu": 3, "dep": 3, "fin": 4}, reglas)
+ni, ne, nd, finance_articles = (seleccion[s] for s in ("int", "ecu", "dep", "fin"))
 # ── HTML builders ──────────────────────────────────────────────────────────
 def flag(lang):
     return "🇬🇧" if lang == "en" else "🇪🇸"
@@ -404,11 +361,11 @@ def build_historia(h):
 
 s_int  = build_section("🌍","NOTICIAS INTERNACIONALES","#1e3a5f", ni, "#1e3a5f,#1e4a8f","Internacional")
 s_ecu  = build_section("🇪🇨","ECUADOR HOY","#065f46", ne, "#065f46,#059669","Ecuador")
-s_dep  = build_section("⚽","DEPORTES Y MUNDIAL 2026","#7c2d12", nd, "#7c2d12,#b45309","Deportes")
+s_dep  = build_section("⚽","DEPORTES","#7c2d12", nd, "#7c2d12,#b45309","Deportes")
 s_hist = build_historia(historia)
 
 print("Fetching finance news...")
-finance_articles = fetch_finance_news(4)
+
 finance_html     = build_finance_section(finance_articles)
 print("  Finance news: " + str(len(finance_articles)) + " articles")
 
