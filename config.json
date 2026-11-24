@@ -1,23 +1,53 @@
 {
   "_instrucciones": "Edita este archivo para controlar qué noticias aparecen. true = activo, false = desactivado.",
-
   "site": {
     "nombre": "Mi Briefing",
     "subtitulo": "Tu resumen de noticias · Your news briefing",
     "hora_manana": "06:00",
     "hora_tarde": "14:00"
   },
-
   "secciones": {
-    "Internacional":    { "activa": true,  "max_articulos": 6, "orden": 1 },
-    "Geopolítica":      { "activa": true,  "max_articulos": 5, "orden": 2 },
-    "Ecuador":          { "activa": true,  "max_articulos": 5, "orden": 3 },
-    "Mercados":         { "activa": true,  "max_articulos": 5, "orden": 4 },
-    "Política EE.UU.":  { "activa": true,  "max_articulos": 5, "orden": 5 },
-    "Ciencia y Salud":  { "activa": true,  "max_articulos": 4, "orden": 6 },
-    "Deportes":         { "activa": true,  "max_articulos": 4, "orden": 7 }
+    "Internacional": {
+      "activa": true,
+      "max_articulos": 6,
+      "orden": 1
+    },
+    "Geopolítica": {
+      "activa": true,
+      "max_articulos": 5,
+      "orden": 2
+    },
+    "Ecuador": {
+      "activa": true,
+      "max_articulos": 5,
+      "orden": 3
+    },
+    "Mercados": {
+      "activa": true,
+      "max_articulos": 5,
+      "orden": 4
+    },
+    "Política EE.UU.": {
+      "activa": true,
+      "max_articulos": 5,
+      "orden": 5
+    },
+    "Ciencia y Salud": {
+      "activa": true,
+      "max_articulos": 4,
+      "orden": 6
+    },
+    "Deportes": {
+      "activa": true,
+      "max_articulos": 4,
+      "orden": 7
+    },
+    "Investigaciones": {
+      "activa": true,
+      "max_articulos": 3,
+      "orden": 5.5
+    }
   },
-
   "fuentes": [
     {
       "nombre": "BBC World",
@@ -27,17 +57,19 @@
       "activa": true,
       "max_items": 4,
       "prioridad": 1,
-      "notas": "Fuente principal internacional"
+      "notas": "Fuente principal internacional",
+      "medio": "BBC"
     },
     {
       "nombre": "Reuters World",
       "url": "https://feeds.reuters.com/reuters/worldNews",
       "idioma": "en",
       "seccion": "Internacional",
-      "activa": true,
+      "activa": false,
       "max_items": 4,
       "prioridad": 1,
-      "notas": ""
+      "notas": "",
+      "medio": "Reuters"
     },
     {
       "nombre": "The Guardian World",
@@ -47,27 +79,29 @@
       "activa": true,
       "max_items": 3,
       "prioridad": 2,
-      "notas": ""
+      "notas": "",
+      "medio": "Guardian"
     },
     {
       "nombre": "AP News",
       "url": "https://rsshub.app/apnews/topics/apf-topnews",
       "idioma": "en",
       "seccion": "Internacional",
-      "activa": true,
+      "activa": false,
       "max_items": 3,
       "prioridad": 2,
       "notas": ""
     },
     {
       "nombre": "DW Español",
-      "url": "https://rss.dw.com/rdf/rss-es-world",
+      "url": "https://rss.dw.com/xml/rss-sp-all",
       "idioma": "es",
       "seccion": "Internacional",
       "activa": true,
       "max_items": 3,
       "prioridad": 1,
-      "notas": "En español, no necesita traducción"
+      "notas": "En español, no necesita traducción",
+      "medio": "DW"
     },
     {
       "nombre": "El País Internacional",
@@ -77,7 +111,8 @@
       "activa": true,
       "max_items": 3,
       "prioridad": 1,
-      "notas": ""
+      "notas": "",
+      "medio": "El País"
     },
     {
       "nombre": "Foreign Policy",
@@ -117,7 +152,8 @@
       "activa": true,
       "max_items": 3,
       "prioridad": 2,
-      "notas": ""
+      "notas": "",
+      "medio": "DW"
     },
     {
       "nombre": "El Universo",
@@ -127,7 +163,8 @@
       "activa": true,
       "max_items": 5,
       "prioridad": 1,
-      "notas": "Diario principal de Ecuador"
+      "notas": "Diario principal de Ecuador",
+      "medio": "El Universo"
     },
     {
       "nombre": "El Universo Noticias",
@@ -137,7 +174,8 @@
       "activa": true,
       "max_items": 4,
       "prioridad": 1,
-      "notas": "Sección noticias de El Universo"
+      "notas": "Sección noticias de El Universo",
+      "medio": "El Universo"
     },
     {
       "nombre": "MarketWatch",
@@ -154,10 +192,11 @@
       "url": "https://feeds.reuters.com/reuters/businessNews",
       "idioma": "en",
       "seccion": "Mercados",
-      "activa": true,
+      "activa": false,
       "max_items": 3,
       "prioridad": 1,
-      "notas": ""
+      "notas": "",
+      "medio": "Reuters"
     },
     {
       "nombre": "BBC Business",
@@ -167,7 +206,8 @@
       "activa": false,
       "max_items": 3,
       "prioridad": 2,
-      "notas": "Desactivado para reducir duplicados con Reuters"
+      "notas": "Desactivado para reducir duplicados con Reuters",
+      "medio": "BBC"
     },
     {
       "nombre": "DW Economía",
@@ -177,7 +217,8 @@
       "activa": true,
       "max_items": 3,
       "prioridad": 2,
-      "notas": ""
+      "notas": "",
+      "medio": "DW"
     },
     {
       "nombre": "Guardian Business",
@@ -187,7 +228,8 @@
       "activa": true,
       "max_items": 3,
       "prioridad": 2,
-      "notas": ""
+      "notas": "",
+      "medio": "Guardian"
     },
     {
       "nombre": "BBC US",
@@ -197,17 +239,19 @@
       "activa": true,
       "max_items": 3,
       "prioridad": 1,
-      "notas": ""
+      "notas": "",
+      "medio": "BBC"
     },
     {
       "nombre": "Reuters Politics",
       "url": "https://feeds.reuters.com/Reuters/PoliticsNews",
       "idioma": "en",
       "seccion": "Política EE.UU.",
-      "activa": true,
+      "activa": false,
       "max_items": 3,
       "prioridad": 1,
-      "notas": ""
+      "notas": "",
+      "medio": "Reuters"
     },
     {
       "nombre": "Guardian US",
@@ -217,7 +261,8 @@
       "activa": true,
       "max_items": 3,
       "prioridad": 2,
-      "notas": ""
+      "notas": "",
+      "medio": "Guardian"
     },
     {
       "nombre": "El País US",
@@ -227,7 +272,8 @@
       "activa": true,
       "max_items": 3,
       "prioridad": 2,
-      "notas": ""
+      "notas": "",
+      "medio": "El País"
     },
     {
       "nombre": "BBC Science",
@@ -237,7 +283,8 @@
       "activa": true,
       "max_items": 3,
       "prioridad": 1,
-      "notas": ""
+      "notas": "",
+      "medio": "BBC"
     },
     {
       "nombre": "Guardian Science",
@@ -247,7 +294,8 @@
       "activa": true,
       "max_items": 3,
       "prioridad": 2,
-      "notas": ""
+      "notas": "",
+      "medio": "Guardian"
     },
     {
       "nombre": "Reuters Science",
@@ -257,7 +305,8 @@
       "activa": false,
       "max_items": 3,
       "prioridad": 3,
-      "notas": "Desactivado — muchos duplicados con BBC y Guardian"
+      "notas": "Desactivado — muchos duplicados con BBC y Guardian",
+      "medio": "Reuters"
     },
     {
       "nombre": "BBC Sport",
@@ -267,7 +316,8 @@
       "activa": true,
       "max_items": 4,
       "prioridad": 1,
-      "notas": ""
+      "notas": "",
+      "medio": "BBC"
     },
     {
       "nombre": "Guardian Sport",
@@ -277,7 +327,8 @@
       "activa": true,
       "max_items": 3,
       "prioridad": 2,
-      "notas": ""
+      "notas": "",
+      "medio": "Guardian"
     },
     {
       "nombre": "El País Deportes",
@@ -287,7 +338,8 @@
       "activa": true,
       "max_items": 3,
       "prioridad": 1,
-      "notas": ""
+      "notas": "",
+      "medio": "El País"
     },
     {
       "nombre": "El Universo Deportes",
@@ -297,10 +349,65 @@
       "activa": true,
       "max_items": 3,
       "prioridad": 2,
-      "notas": "Deportes desde Ecuador"
+      "notas": "Deportes desde Ecuador",
+      "medio": "El Universo"
+    },
+    {
+      "nombre": "BBC Mundo",
+      "url": "https://feeds.bbci.co.uk/mundo/rss.xml",
+      "idioma": "es",
+      "seccion": "Internacional",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 1,
+      "medio": "BBC"
+    },
+    {
+      "nombre": "NPR World",
+      "url": "https://feeds.npr.org/1004/rss.xml",
+      "idioma": "en",
+      "seccion": "Internacional",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 1
+    },
+    {
+      "nombre": "Al Jazeera English",
+      "url": "https://www.aljazeera.com/xml/rss/all.xml",
+      "idioma": "en",
+      "seccion": "Geopolítica",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 1
+    },
+    {
+      "nombre": "ProPublica",
+      "url": "https://www.propublica.org/feeds/propublica/main",
+      "idioma": "en",
+      "seccion": "Investigaciones",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 1
+    },
+    {
+      "nombre": "France 24 Español",
+      "url": "https://www.france24.com/es/rss",
+      "idioma": "es",
+      "seccion": "Internacional",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 1
+    },
+    {
+      "nombre": "elDiario.es",
+      "url": "https://www.eldiario.es/rss/internacional/",
+      "idioma": "es",
+      "seccion": "Geopolítica",
+      "activa": true,
+      "max_items": 3,
+      "prioridad": 1
     }
   ],
-
   "deduplicacion": {
     "umbral_similitud": 0.42,
     "ventana_horas": 24,

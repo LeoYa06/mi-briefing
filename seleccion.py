@@ -70,6 +70,13 @@ def seleccionar(items, limites, reglas):
         a = grupo[0].copy()
         fuentes = list(dict.fromkeys(x["source"] for x in grupo))
         a["multi_source"] = len(fuentes) > 1
+        coberturas = {}
+        for nota in grupo:
+            direccion = enlace(nota["link"])
+            if direccion:
+                medio = nota.get("medio", nota["source"])
+                coberturas.setdefault(medio, (nota["source"], nota["link"]))
+        a["coberturas"] = list(coberturas.values())[:reglas["max_fuentes_combinadas"]]
         a["principal"] = fuentes[0]
         a["source"] = " · ".join(fuentes[:reglas["max_fuentes_combinadas"]])
         pendientes[a["seccion"]].append(a)

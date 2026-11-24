@@ -4,6 +4,7 @@ Lee config.json, descarga RSS, deduplica con algoritmo mejorado,
 traduce titulares al español y genera docs/index.html
 """
 
+from portada import render, tipo
 from seleccion import seleccionar
 import feedparser
 import json
@@ -111,7 +112,7 @@ for feed_meta in active_feeds:
                 try:
                     dt = datetime(*pub[:6], tzinfo=timezone.utc).astimezone(ET)
                     pub_ts   = dt.timestamp()
-                    time_str = dt.strftime("%-I:%M %p ET")
+                    time_str = dt.strftime("%d/%m · %-I:%M %p ET")
                 except Exception:
                     pass
 
@@ -122,12 +123,14 @@ for feed_meta in active_feeds:
                 "summary":      summary,
                 "summary_es":   summary_es,
                 "source":       feed_meta["nombre"],
+                "medio":        feed_meta.get("medio", feed_meta["nombre"]),
                 "idioma":       feed_meta["idioma"],
                 "seccion":      sec,
                 "time":         time_str,
                 "pub_ts":       pub_ts,
                 "prioridad":    feed_meta.get("prioridad", 5),
                 "image":        extract_image(entry),
+                "tipo":         tipo(entry.get("tags", [])),
                 "multi_source": False,
             })
             count += 1
@@ -153,85 +156,6 @@ SECTIONS_ORDER = sorted(
     key=lambda s: CFG["secciones"][s].get("orden", 99)
 )
 
-# ── Design tokens per section ──────────────────────────────────────────────
-CAT_META = {
-    "Internacional":   {"accent": "#2563eb", "light": "#dbeafe", "dark": "#0a2540", "icon": "🌍",  "grad": "135deg,#0a2540,#1e3a5f"},
-    "Geopolítica":     {"accent": "#7c3aed", "light": "#ede9fe", "dark": "#2d0a40", "icon": "🗺️", "grad": "135deg,#2d0a40,#4c1d95"},
-    "Ecuador":         {"accent": "#059669", "light": "#d1fae5", "dark": "#064e3b", "icon": "🇪🇨", "grad": "135deg,#064e3b,#065f46"},
-    "Mercados":        {"accent": "#16a34a", "light": "#dcfce7", "dark": "#052e16", "icon": "📈",  "grad": "135deg,#052e16,#14532d"},
-    "Política EE.UU.": {"accent": "#dc2626", "light": "#fee2e2", "dark": "#450a0a", "icon": "🏛️", "grad": "135deg,#450a0a,#7f1d1d"},
-    "Ciencia y Salud": {"accent": "#0891b2", "light": "#cffafe", "dark": "#083344", "icon": "🔬",  "grad": "135deg,#083344,#164e63"},
-    "Deportes":        {"accent": "#ea580c", "light": "#ffedd5", "dark": "#431407", "icon": "⚽",  "grad": "135deg,#431407,#7c2d12"},
-}
-DEFAULT_META = {"accent": "#64748b", "light": "#f1f5f9", "dark": "#1e293b", "icon": "📰", "grad": "135deg,#1e293b,#334155"}
-
-def flag(lang):
-    return "🇬🇧" if lang == "en" else "🇪🇸"
-
-def hero_card(a, sec):
-    m = CAT_META.get(sec, DEFAULT_META)
-    img = f'<div class="hero-img" style="background-image:url(\'{a["image"]}\')"></div>' \
-          if a.get("image") else \
-          f'<div class="hero-img hero-ph" style="background:linear-gradient({m["grad"]})"><span class="ph-icon">{m["icon"]}</span></div>'
-    src_badge = ("🔗 " if a.get("multi_source") else "") + a["source"]
-    return f"""<a href="{a['link']}" target="_blank" rel="noopener" class="hero-card" style="--acc:{m['accent']}">
-      {img}
-      <div class="hero-body">
-        <div class="card-meta-row">
-          <span class="ctag" style="background:{m['light']};color:{m['dark']}">{sec}</span>
-          <span class="mtime">{flag(a['idioma'])} {src_badge} · {a['time']}</span>
-        </div>
-        <h2 class="hero-title">{a['title_es']}</h2>
-        {'<p class="hero-sum">' + a['summary_es'] + '</p>' if a.get('summary_es') else ''}
-      </div>
-    </a>"""
-
-def list_card(a, sec):
-    m = CAT_META.get(sec, DEFAULT_META)
-    thumb = f'<div class="lthumb" style="background-image:url(\'{a["image"]}\')"></div>' \
-            if a.get("image") else \
-            f'<div class="lthumb lph" style="background:linear-gradient({m["grad"]})"><span style="font-size:18px">{m["icon"]}</span></div>'
-    src_badge = ("🔗 " if a.get("multi_source") else "") + a["source"]
-    return f"""<a href="{a['link']}" target="_blank" rel="noopener" class="lcard" style="--acc:{m['accent']}">
-      <div class="lbody">
-        <div class="card-meta-row">
-          <span class="ctag ctag-sm" style="background:{m['light']};color:{m['dark']}">{sec}</span>
-          <span class="mtime">{flag(a['idioma'])} {src_badge} · {a['time']}</span>
-        </div>
-        <h3 class="ltitle">{a['title_es']}</h3>
-      </div>
-      {thumb}
-    </a>"""
-
-def build_section(sec, items):
-    if not items:
-        return ""
-    m   = CAT_META.get(sec, DEFAULT_META)
-    sec_id = re.sub(r'[^a-z0-9]', '-', sec.lower())
-    hero   = hero_card(items[0], sec)
-    rest   = "".join(list_card(a, sec) for a in items[1:])
-    mas = (f'<details class="more"><summary>Ver {len(items)-1} titular'
-           + (' más' if len(items) == 2 else 'es más')
-           + f'</summary><div class="lstack">{rest}</div></details>') if rest else ""
-    return f"""<section class="nsec" id="s-{sec_id}" style="--acc:{m['accent']}">
-      <div class="sec-hd">
-        <div class="sec-lbl"><span>{m['icon']}</span><h2 class="sec-name">{sec}</h2></div>
-        <div class="sec-line"></div>
-      </div>
-      {hero}
-      {mas}
-    </section>"""
-
-sections_html = "".join(build_section(s, by_sec.get(s, [])) for s in SECTIONS_ORDER)
-
-# ── Nav pills ──────────────────────────────────────────────────────────────
-nav_pills = "".join(
-    f'<a class="npill" href="#s-{re.sub(r"[^a-z0-9]", "-", s.lower())}" '
-    f'style="--acc:{CAT_META.get(s, DEFAULT_META)["accent"]}">'
-    f'{CAT_META.get(s, DEFAULT_META)["icon"]} {s}</a>'
-    for s in SECTIONS_ORDER if by_sec.get(s)
-)
-
 # ── Audio scripts ──────────────────────────────────────────────────────────
 top = [by_sec[s][0] for s in SECTIONS_ORDER if by_sec.get(s)]
 months_en_es = {"January":"enero","February":"febrero","March":"marzo","April":"abril",
@@ -251,127 +175,11 @@ script_es = (f"Bienvenido a Mi Briefing. {edition_es}, {date_display}. "
 script_en = (f"Welcome to Mi Briefing. {edition_es}, {date_display}. "
              + " ".join(f"In {a['seccion']}: {a['title']}. Source: {a['source']}." for a in top)
              + " That's all for now. Visit Mi Briefing for the full stories.")
-audio_data = json.dumps({"es": script_es, "en": script_en})
+audio_data = json.dumps({"es": script_es, "en": script_en}).replace("<", r"<")
 
-all_sources = sorted(set(
-    s.strip() for a in raw_articles for s in a["source"].split("·")
-))
-sources_str = " · ".join(all_sources)
-
-# ── HTML ──────────────────────────────────────────────────────────────────
-site = CFG["site"]
-HTML = f"""<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f0e0c">
-<meta property="og:title" content="{site['nombre']} — {date_display}">
-<meta property="og:description" content="{site['subtitulo']} · {edition_es}">
-<title>{site['nombre']} — {date_display}</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{{box-sizing:border-box;margin:0;padding:0;}}
-:root{{--bg:#f5f3ef;--sur:#fff;--bdr:#e0dbd3;--txt:#0f0e0c;--mut:#5c5852;--fnt:#a09a93;--r:12px;--acc:#2563eb;}}
-html{{scroll-behavior:smooth;}}
-body{{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;}}
-a{{color:inherit;text-decoration:none;}}
-
-.masthead{{background:var(--txt);color:#fff;padding:1.25rem 1rem 1rem;text-align:center;position:relative;overflow:hidden;}}
-.masthead::before{{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -20%,rgba(255,255,255,.07) 0%,transparent 70%);pointer-events:none;}}
-.eyebrow{{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:.4rem;}}
-.logo{{font-family:'Fraunces',serif;font-size:clamp(2.2rem,10vw,3.2rem);font-weight:700;letter-spacing:-1.5px;line-height:1;margin-bottom:.75rem;}}
-.mastmeta{{display:flex;justify-content:center;align-items:center;gap:10px;font-size:11px;color:rgba(255,255,255,.55);flex-wrap:wrap;}}
-.edbadge{{background:rgba(255,255,255,.15);color:#fff;font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px;border:1px solid rgba(255,255,255,.2);letter-spacing:1px;text-transform:uppercase;}}
-
-
-
-.sec-nav{{background:var(--sur);border-bottom:1px solid var(--bdr);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}}
-.sec-nav::-webkit-scrollbar{{display:none;}}
-.nav-row{{display:flex;gap:4px;padding:8px 12px;width:max-content;min-width:100%;}}
-.npill{{font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;border:1.5px solid var(--bdr);color:var(--mut);white-space:nowrap;transition:all .18s;}}
-.npill:hover{{border-color:var(--acc);color:var(--acc);background:color-mix(in srgb,var(--acc) 8%,transparent);}}
-
-.audio-bar{{background:var(--sur);border-bottom:1px solid var(--bdr);padding:10px 12px;}}
-.audio-in{{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}}
-.albl{{font-size:13px;font-weight:600;}}
-.ltog{{display:flex;border:1.5px solid var(--bdr);border-radius:6px;overflow:hidden;}}
-.lbtn{{padding:4px 12px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--mut);font-family:'DM Sans',sans-serif;transition:all .15s;}}
-.lbtn.on{{background:var(--txt);color:#fff;}}
-.pbtn{{display:flex;align-items:center;gap:6px;padding:6px 16px;font-size:13px;font-weight:600;background:var(--txt);color:#fff;border:none;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity .15s;}}
-.pbtn:hover{{opacity:.85;}}
-.aprg{{flex:1;min-width:100px;font-size:11px;color:var(--mut);display:none;}}
-.aprg.on{{display:block;}}
-.prg-wrap{{height:3px;background:var(--bdr);border-radius:2px;margin-top:5px;}}
-.prg-fill{{height:3px;background:var(--txt);border-radius:2px;width:0%;transition:width .5s linear;}}
-
-.main{{padding:1.25rem 0 3rem;}}
-.wrap{{max-width:680px;margin:0 auto;padding:0 12px;}}
-
-.nsec{{margin-bottom:2.5rem;scroll-margin-top:80px;}}
-.sec-hd{{display:flex;align-items:center;gap:10px;margin-bottom:1rem;}}
-.sec-lbl{{display:flex;align-items:center;gap:6px;flex-shrink:0;}}
-.sec-name{{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:600;white-space:nowrap;}}
-.sec-line{{flex:1;height:2px;border-radius:1px;background:var(--acc);opacity:.25;}}
-
-.hero-card{{display:block;background:var(--sur);border-radius:var(--r);overflow:hidden;border:1px solid var(--bdr);margin-bottom:10px;transition:transform .2s,box-shadow .2s;animation:up .4s ease both;}}
-.hero-card:hover{{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.1);}}
-.hero-img{{width:100%;height:200px;background-size:cover;background-position:center;}}
-.hero-ph{{display:flex;align-items:center;justify-content:center;}}
-.ph-icon{{font-size:48px;opacity:.6;}}
-.hero-body{{padding:1rem 1.1rem 1.1rem;}}
-.hero-title{{font-family:'Fraunces',serif;font-size:1.2rem;font-weight:700;line-height:1.3;margin-bottom:.4rem;}}
-.hero-sum{{font-size:.875rem;color:var(--mut);line-height:1.55;}}
-.hero-card:hover .hero-title{{color:var(--acc);}}
-
-.lstack{{display:flex;flex-direction:column;gap:8px;}}
-.lcard{{display:flex;align-items:stretch;background:var(--sur);border-radius:10px;overflow:hidden;border:1px solid var(--bdr);transition:transform .2s,box-shadow .2s;animation:up .4s ease both;}}
-.lcard:hover{{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.08);}}
-.lbody{{flex:1;padding:.85rem 1rem;min-width:0;}}
-.ltitle{{font-family:'Fraunces',serif;font-size:.95rem;font-weight:600;line-height:1.35;}}
-.lcard:hover .ltitle{{color:var(--acc);}}
-.lthumb{{width:90px;flex-shrink:0;background-size:cover;background-position:center;}}
-.lph{{display:flex;align-items:center;justify-content:center;}}
-
-.card-meta-row{{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:.5rem;flex-wrap:wrap;}}
-.ctag{{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:20px;flex-shrink:0;}}
-.ctag-sm{{font-size:9px;padding:2px 6px;}}
-.mtime{{font-size:11px;color:var(--fnt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;}}
-
-.footer{{background:var(--txt);color:rgba(255,255,255,.6);padding:1.5rem 1rem;text-align:center;}}
-.footer strong{{color:#fff;}}
-.footer p{{font-size:12px;margin-bottom:4px;}}
-.src-list{{font-size:10px;color:rgba(255,255,255,.3);margin-top:8px;line-height:1.9;}}
-
-@keyframes up{{from{{opacity:0;transform:translateY(12px);}}to{{opacity:1;transform:translateY(0);}}}}
-@media(min-width:480px){{.hero-img{{height:240px;}}.hero-title{{font-size:1.35rem;}}.lthumb{{width:110px;}}}}
-.more summary{{cursor:pointer;font-weight:700;padding:.85rem .25rem;color:var(--acc);}}
-.more[open] summary{{margin-bottom:.25rem;}}
-</style>
-</head>
-<body>
-
-<header class="masthead">
-  <div class="wrap">
-    <p class="eyebrow">{site['subtitulo']}</p>
-    <h1 class="logo">{site['nombre']}</h1>
-    <div class="mastmeta">
-      <span>{date_display}</span>
-      <span>·</span>
-      <span class="edbadge">{edition_es}</span>
-      <span>·</span>
-      <span>Actualizado {time_display}</span>
-    </div>
-  </div>
-</header>
-
-<nav class="sec-nav"><div class="nav-row">{nav_pills}</div></nav>
-
-<div class="audio-bar">
+audio_controls = """<div class="audio-bar">
   <div class="audio-in">
-    <div class="albl">🎧 Escuchar resumen</div>
+    <div class="albl">Escuchar</div>
     <div class="ltog">
       <button class="lbtn on" id="bes" onclick="setLang('es')">Español</button>
       <button class="lbtn"    id="ben" onclick="setLang('en')">English</button>
@@ -384,19 +192,8 @@ a{{color:inherit;text-decoration:none;}}
       <div class="prg-wrap"><div class="prg-fill" id="pfill"></div></div>
     </div>
   </div>
-</div>
-
-<main class="main"><div class="wrap">{sections_html}</div></main>
-
-<footer class="footer">
-  <div class="wrap">
-    <p><strong>{site['nombre']}</strong> — Resumen para familia y amigos</p>
-    <p>Actualizado automáticamente · {site['hora_manana']} AM y {site['hora_tarde'].replace('14','02')} PM ET</p>
-    <p class="src-list">{sources_str}</p>
-  </div>
-</footer>
-
-<script>
+</div>"""
+audio_script = f"""<script>
 const SC={audio_data};
 let lang='es',speaking=false,utt=null;
 function setLang(l){{
@@ -441,9 +238,8 @@ function reset(){{
   document.getElementById('aprg').classList.remove('on');
 }}
 if(window.speechSynthesis){{speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=()=>speechSynthesis.getVoices();}}
-</script>
-</body>
-</html>"""
+</script>"""
+HTML = render(by_sec, SECTIONS_ORDER, CFG["site"], date_display, edition_es, time_display, audio_controls, audio_script)
 
 os.makedirs("docs", exist_ok=True)
 with open("docs/index.html", "w", encoding="utf-8") as f:
